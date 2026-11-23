@@ -230,11 +230,11 @@ export const ReportsPage: React.FC = () => {
             <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-800">
               Modul Pelaporan
             </span>
-            <h1 className="text-2xl font-bold text-slate-900">
+            <h1 className="text-2xl font-bold text-ink">
               Laporan Rekapitulasi Distribusi Armada
             </h1>
           </div>
-          <p className="text-sm text-slate-500 mt-1">
+          <p className="text-sm text-muted mt-1">
             Rekapitulasi rute pengiriman harian, cetak surat jalan PDF, dan ekspor laporan ke Excel (XLSX).
           </p>
         </div>
@@ -244,7 +244,7 @@ export const ReportsPage: React.FC = () => {
           <button
             onClick={handleExportExcel}
             disabled={filteredRoutes.length === 0}
-            className="flex items-center gap-2 px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-xs transition disabled:opacity-50"
+            className="flex items-center gap-2 px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-md text-xs font-bold shadow-xs transition disabled:opacity-50"
           >
             <FileSpreadsheet className="w-4 h-4" />
             <span>Ekspor Excel (.xlsx)</span>
@@ -253,7 +253,7 @@ export const ReportsPage: React.FC = () => {
           <button
             onClick={handleExportPdf}
             disabled={filteredRoutes.length === 0}
-            className="flex items-center gap-2 px-3.5 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold shadow-xs transition disabled:opacity-50"
+            className="flex items-center gap-2 px-3.5 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-md text-xs font-bold shadow-xs transition disabled:opacity-50"
           >
             <Download className="w-4 h-4" />
             <span>Ekspor PDF (A4)</span>
@@ -263,81 +263,81 @@ export const ReportsPage: React.FC = () => {
 
       {/* KPI Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
-          <span className="text-xs font-semibold text-slate-400 block uppercase">
+        <div className="bg-white p-5 rounded-md border border-line shadow-xs">
+          <span className="text-xs font-semibold text-subtle block ">
             Total Rute Terjadwal
           </span>
-          <h3 className="text-2xl font-extrabold text-slate-900 mt-1">
+          <h3 className="text-2xl font-extrabold text-ink mt-1">
             {filteredRoutes.length}{' '}
-            <span className="text-sm font-semibold text-slate-500">Rute</span>
+            <span className="text-sm font-semibold text-muted">Rute</span>
           </h3>
           <p className="text-xs text-emerald-600 font-semibold mt-1">
             {cumulativeStats.completedRoutes} Rute Selesai
           </p>
         </div>
 
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
-          <span className="text-xs font-semibold text-slate-400 block uppercase">
+        <div className="bg-white p-5 rounded-md border border-line shadow-xs">
+          <span className="text-xs font-semibold text-subtle block ">
             Total Jarak Tempuh
           </span>
           <h3 className="text-2xl font-extrabold text-blue-700 mt-1">
             {cumulativeStats.totalJarakKm.toFixed(2)}{' '}
-            <span className="text-sm font-semibold text-slate-500">km</span>
+            <span className="text-sm font-semibold text-muted">km</span>
           </h3>
-          <p className="text-xs text-slate-500 mt-1">Bolak-balik depot Haurwangi</p>
+          <p className="text-xs text-muted mt-1">Bolak-balik depot Haurwangi</p>
         </div>
 
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
-          <span className="text-xs font-semibold text-slate-400 block uppercase">
+        <div className="bg-white p-5 rounded-md border border-line shadow-xs">
+          <span className="text-xs font-semibold text-subtle block ">
             Total Muatan Terdistribusi
           </span>
-          <h3 className="text-2xl font-extrabold text-slate-900 mt-1">
+          <h3 className="text-2xl font-extrabold text-ink mt-1">
             {cumulativeStats.totalMuatanKg.toLocaleString('id-ID')}{' '}
-            <span className="text-sm font-semibold text-slate-500">kg</span>
+            <span className="text-sm font-semibold text-muted">kg</span>
           </h3>
-          <p className="text-xs text-slate-500 mt-1">Produk kantong & tali plastik</p>
+          <p className="text-xs text-muted mt-1">Produk kantong & tali plastik</p>
         </div>
 
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
-          <span className="text-xs font-semibold text-slate-400 block uppercase">
+        <div className="bg-white p-5 rounded-md border border-line shadow-xs">
+          <span className="text-xs font-semibold text-subtle block ">
             Estimasi Biaya Bahan Bakar
           </span>
           <h3 className="text-2xl font-extrabold text-emerald-700 mt-1">
             {formatRupiah(cumulativeStats.totalBiayaBbmRp)}
           </h3>
-          <p className="text-xs text-slate-500 mt-1">
+          <p className="text-xs text-muted mt-1">
             {appSettings?.konsumsi_bbm_km_per_liter || 8} km/liter
           </p>
         </div>
       </div>
 
       {/* Filter Bar (WIB Range) */}
-      <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs flex flex-wrap items-center justify-between gap-3 text-xs">
+      <div className="bg-white p-4 rounded-md border border-line shadow-xs flex flex-wrap items-center justify-between gap-3 text-xs">
         <div className="flex flex-wrap items-center gap-3">
           <div className="flex items-center gap-2">
-            <Calendar className="w-4 h-4 text-slate-400" />
-            <span className="font-bold text-slate-700">Periode (WIB):</span>
+            <Calendar className="w-4 h-4 text-subtle" />
+            <span className="font-bold text-ink">Periode (WIB):</span>
             <input
               type="date"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
-              className="px-2.5 py-1.5 rounded-xl border border-slate-300 font-semibold text-slate-700 bg-white"
+              className="px-2.5 py-1.5 rounded-md border border-line font-semibold text-ink bg-white"
             />
-            <span className="text-slate-400 font-semibold">s/d</span>
+            <span className="text-subtle font-semibold">s/d</span>
             <input
               type="date"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
-              className="px-2.5 py-1.5 rounded-xl border border-slate-300 font-semibold text-slate-700 bg-white"
+              className="px-2.5 py-1.5 rounded-md border border-line font-semibold text-ink bg-white"
             />
           </div>
 
-          <div className="flex items-center gap-2 border-l border-slate-200 pl-3">
-            <Filter className="w-4 h-4 text-slate-400" />
+          <div className="flex items-center gap-2 border-l border-line pl-3">
+            <Filter className="w-4 h-4 text-subtle" />
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="px-2.5 py-1.5 rounded-xl border border-slate-300 font-semibold text-slate-700 bg-white"
+              className="px-2.5 py-1.5 rounded-md border border-line font-semibold text-ink bg-white"
             >
               <option value="all">Semua Status</option>
               <option value="selesai">Selesai</option>
@@ -349,19 +349,19 @@ export const ReportsPage: React.FC = () => {
 
         <div className="flex items-center gap-2 w-full sm:w-auto">
           <div className="relative flex-1 sm:w-60">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+            <Search className="w-4 h-4 text-subtle absolute left-3 top-2.5" />
             <input
               type="text"
               placeholder="Cari driver / plat..."
               value={searchDriverOrPlat}
               onChange={(e) => setSearchDriverOrPlat(e.target.value)}
-              className="w-full pl-9 pr-3 py-1.5 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+              className="w-full pl-9 pr-3 py-1.5 rounded-md border border-line text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/20"
             />
           </div>
           <button
             onClick={loadReportData}
             title="Muat Ulang Data"
-            className="p-2 border border-slate-300 rounded-xl hover:bg-slate-50 text-slate-600 transition"
+            className="p-2 border border-line rounded-md hover:bg-surface-subtle text-muted transition"
           >
             <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
           </button>
@@ -369,10 +369,10 @@ export const ReportsPage: React.FC = () => {
       </div>
 
       {/* Tabel Data Rekapitulasi */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
+      <div className="bg-white rounded-md border border-line shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-50 border-b border-slate-200 text-slate-600 uppercase font-bold text-[11px] tracking-wider">
+            <thead className="bg-surface-subtle border-b border-line text-muted  font-bold text-[11px] ">
               <tr>
                 <th className="py-3 px-4 text-center">No</th>
                 <th className="py-3 px-4">Tanggal (WIB)</th>
@@ -386,31 +386,31 @@ export const ReportsPage: React.FC = () => {
                 <th className="py-3 px-4 text-center">Surat Jalan</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 text-slate-700">
+            <tbody className="divide-y divide-slate-100 text-ink">
               {loading ? (
                 <tr>
-                  <td colSpan={10} className="py-12 text-center text-slate-400">
+                  <td colSpan={10} className="py-12 text-center text-subtle">
                     <RefreshCw className="w-6 h-6 animate-spin mx-auto text-blue-600 mb-2" />
                     <span>Memuat data rekapitulasi distribusi...</span>
                   </td>
                 </tr>
               ) : filteredRoutes.length === 0 ? (
                 <tr>
-                  <td colSpan={10} className="py-12 text-center text-slate-400">
+                  <td colSpan={10} className="py-12 text-center text-subtle">
                     <Layers className="w-8 h-8 mx-auto text-slate-300 mb-2" />
-                    <span className="font-semibold block text-slate-600">
+                    <span className="font-semibold block text-muted">
                       Tidak Ada Data Rute pada Periode Ini
                     </span>
-                    <span className="text-xs text-slate-400">
+                    <span className="text-xs text-subtle">
                       Silakan sesuaikan tanggal mulai atau status filter di atas.
                     </span>
                   </td>
                 </tr>
               ) : (
                 filteredRoutes.map((r, idx) => (
-                  <tr key={r.id} className="hover:bg-slate-50/80 transition">
-                    <td className="py-3 px-4 text-center font-bold text-slate-400">{idx + 1}</td>
-                    <td className="py-3 px-4 font-semibold text-slate-900 whitespace-nowrap">
+                  <tr key={r.id} className="hover:bg-surface-subtle/80 transition">
+                    <td className="py-3 px-4 text-center font-bold text-subtle">{idx + 1}</td>
+                    <td className="py-3 px-4 font-semibold text-ink whitespace-nowrap">
                       {formatTanggalWIB(r.tanggal, {
                         month: 'short',
                         day: 'numeric',
@@ -418,22 +418,22 @@ export const ReportsPage: React.FC = () => {
                       })}
                     </td>
                     <td className="py-3 px-4 whitespace-nowrap">
-                      <span className="font-bold text-slate-900 block">{r.vehicle?.plat || '-'}</span>
-                      <span className="text-[10px] text-slate-500">{r.vehicle?.nama || 'Armada'}</span>
+                      <span className="font-bold text-ink block">{r.vehicle?.plat || '-'}</span>
+                      <span className="text-[10px] text-muted">{r.vehicle?.nama || 'Armada'}</span>
                     </td>
-                    <td className="py-3 px-4 font-semibold text-slate-800 whitespace-nowrap">
+                    <td className="py-3 px-4 font-semibold text-ink whitespace-nowrap">
                       {r.driver?.nama || '-'}
                     </td>
-                    <td className="py-3 px-4 text-center font-semibold text-slate-800">
+                    <td className="py-3 px-4 text-center font-semibold text-ink">
                       {r.stops?.length || 0} Toko
                     </td>
                     <td className="py-3 px-4 text-right font-mono font-semibold text-blue-700 whitespace-nowrap">
                       {Number(r.total_jarak_km).toFixed(2)} km
                     </td>
-                    <td className="py-3 px-4 text-right font-mono font-semibold text-slate-800 whitespace-nowrap">
+                    <td className="py-3 px-4 text-right font-mono font-semibold text-ink whitespace-nowrap">
                       {Number(r.total_muatan_kg).toLocaleString('id-ID')} kg
                     </td>
-                    <td className="py-3 px-4 text-right font-semibold text-slate-800 whitespace-nowrap">
+                    <td className="py-3 px-4 text-right font-semibold text-ink whitespace-nowrap">
                       {formatRupiah(r.estimasi_biaya_bbm)}
                     </td>
                     <td className="py-3 px-4 text-center whitespace-nowrap">
@@ -456,7 +456,7 @@ export const ReportsPage: React.FC = () => {
                     <td className="py-3 px-4 text-center whitespace-nowrap">
                       <button
                         onClick={() => handlePrintSuratJalan(r)}
-                        className="p-1.5 rounded-lg border border-slate-200 hover:bg-blue-50 text-blue-600 transition inline-flex items-center gap-1 font-semibold"
+                        className="p-1.5 rounded-lg border border-line hover:bg-blue-50 text-blue-600 transition inline-flex items-center gap-1 font-semibold"
                         title="Unduh Surat Jalan PDF"
                       >
                         <FileText className="w-3.5 h-3.5" />
@@ -469,9 +469,9 @@ export const ReportsPage: React.FC = () => {
             </tbody>
             {/* Total Row */}
             {filteredRoutes.length > 0 && (
-              <tfoot className="bg-slate-100 border-t-2 border-slate-200 font-bold text-slate-900 text-xs">
+              <tfoot className="bg-surface-muted border-t-2 border-line font-bold text-ink text-xs">
                 <tr>
-                  <td colSpan={4} className="py-3 px-4 text-center uppercase tracking-wider">
+                  <td colSpan={4} className="py-3 px-4 text-center  ">
                     Total Akumulasi Periode
                   </td>
                   <td className="py-3 px-4 text-center">
@@ -486,7 +486,7 @@ export const ReportsPage: React.FC = () => {
                   <td className="py-3 px-4 text-right text-emerald-800">
                     {formatRupiah(cumulativeStats.totalBiayaBbmRp)}
                   </td>
-                  <td colSpan={2} className="py-3 px-4 text-center text-slate-500">
+                  <td colSpan={2} className="py-3 px-4 text-center text-muted">
                     {cumulativeStats.completedRoutes} Selesai
                   </td>
                 </tr>

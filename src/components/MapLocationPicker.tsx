@@ -73,7 +73,7 @@ export const MapLocationPicker: React.FC<MapLocationPickerProps> = ({
   );
 
   return (
-    <div className="w-full rounded-xl overflow-hidden border border-slate-300 shadow-inner relative z-0">
+    <div className="w-full rounded-md overflow-hidden border border-border relative z-0">
       <MapContainer
         center={[validLat, validLng]}
         zoom={14}

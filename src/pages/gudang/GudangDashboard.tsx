@@ -64,38 +64,38 @@ export const GudangDashboard: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Welcome Banner */}
-      <div className="bg-gradient-to-r from-emerald-700 via-teal-700 to-emerald-800 rounded-3xl p-6 sm:p-8 text-white shadow-lg">
-        <div className="max-w-3xl">
-          <div className="flex flex-wrap items-center gap-2 mb-3">
-            <span className="px-3 py-1 rounded-full text-xs font-semibold bg-white/20 backdrop-blur-xs text-emerald-100 inline-block">
-              Dashboard Operasional Gudang
+      {/* Header Halaman */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-5 border-b border-line">
+        <div>
+          <div className="flex flex-wrap items-center gap-2 mb-1.5">
+            <span className="px-2.5 py-0.5 rounded-md text-xs font-medium bg-surface-muted text-muted inline-block">
+              Dashboard operasional gudang
             </span>
             <RealtimeBadge status={realtimeStatus} />
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
+          <h1 className="text-2xl font-bold text-ink tracking-tight">
             Halo, {profile?.nama || 'Tim Gudang'}!
           </h1>
-          <p className="mt-2 text-emerald-100 text-sm leading-relaxed">
-            Periksa ketersediaan stok fisik komoditas plastik dan konfirmasikan kesiapan barang untuk pesanan yang masuk sebelum rute armada dihitung.
+          <p className="mt-1 text-sm text-muted">
+            Periksa ketersediaan stok fisik komoditas plastik dan konfirmasikan kesiapan barang untuk pesanan sebelum rute dihitung.
           </p>
+        </div>
 
-          <div className="mt-6 flex flex-wrap gap-3">
-            <Link
-              to="/gudang/orders"
-              className="px-4 py-2.5 bg-white text-emerald-800 font-semibold rounded-xl text-xs sm:text-sm hover:bg-emerald-50 transition shadow-sm flex items-center gap-2"
-            >
-              <CheckSquare className="w-4 h-4 text-emerald-600" />
-              <span>Konfirmasi Kesiapan Pesanan</span>
-            </Link>
-            <Link
-              to="/gudang/stock"
-              className="px-4 py-2.5 bg-white/10 hover:bg-white/20 text-white font-medium rounded-xl text-xs sm:text-sm backdrop-blur-xs transition flex items-center gap-2"
-            >
-              <Boxes className="w-4 h-4" />
-              <span>Lihat Stok Produk</span>
-            </Link>
-          </div>
+        <div className="flex flex-wrap gap-2.5 shrink-0">
+          <Link
+            to="/gudang/orders"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-accent hover:bg-accent-hover text-white text-sm font-medium rounded-md transition-colors focus:outline-hidden focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 min-h-[40px]"
+          >
+            <CheckSquare className="w-4 h-4" />
+            <span>Konfirmasi kesiapan pesanan</span>
+          </Link>
+          <Link
+            to="/gudang/stock"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-surface hover:bg-surface-subtle text-ink border border-line text-sm font-medium rounded-md transition-colors focus:outline-hidden focus-visible:ring-2 focus-visible:ring-accent min-h-[40px]"
+          >
+            <Boxes className="w-4 h-4 text-muted" />
+            <span>Lihat stok produk</span>
+          </Link>
         </div>
       </div>
 
@@ -104,95 +104,95 @@ export const GudangDashboard: React.FC = () => {
         {/* Antrean Verifikasi */}
         <Link
           to="/gudang/orders"
-          className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs hover:shadow-md hover:border-emerald-300 transition group"
+          className="bg-surface p-5 rounded-md border border-line hover:border-border-strong transition-colors group"
         >
           <div className="flex justify-between items-start">
             <div>
-              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                Perlu Disiapkan / Konfirmasi
+              <p className="text-xs font-medium text-muted">
+                Perlu disiapkan / konfirmasi
               </p>
-              <h3 className="text-2xl font-bold text-amber-600 mt-1">
+              <h3 className="text-2xl font-bold text-ink mt-1">
                 {loading ? '...' : pendingOrdersCount}
               </h3>
             </div>
-            <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center group-hover:bg-amber-600 group-hover:text-white transition">
+            <div className="w-10 h-10 rounded-md bg-surface-muted text-muted flex items-center justify-center group-hover:text-ink transition-colors">
               <Clock className="w-5 h-5" />
             </div>
           </div>
-          <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-amber-600 font-medium">
-            <span>Buka Antrean Pesanan</span>
-            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition" />
+          <div className="mt-4 pt-3 border-t border-line flex items-center justify-between text-xs text-accent font-medium">
+            <span>Buka antrean pesanan</span>
+            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
           </div>
         </Link>
 
         {/* Pesanan Siap */}
         <Link
           to="/gudang/orders"
-          className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs hover:shadow-md hover:border-emerald-300 transition group"
+          className="bg-surface p-5 rounded-md border border-line hover:border-border-strong transition-colors group"
         >
           <div className="flex justify-between items-start">
             <div>
-              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                Pesanan Telah Siap Kirim
+              <p className="text-xs font-medium text-muted">
+                Pesanan telah siap kirim
               </p>
-              <h3 className="text-2xl font-bold text-emerald-600 mt-1">
+              <h3 className="text-2xl font-bold text-ink mt-1">
                 {loading ? '...' : readyOrdersCount}
               </h3>
             </div>
-            <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition">
+            <div className="w-10 h-10 rounded-md bg-surface-muted text-muted flex items-center justify-center group-hover:text-ink transition-colors">
               <PackageCheck className="w-5 h-5" />
             </div>
           </div>
-          <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-emerald-600 font-medium">
-            <span>Siap Dihitung Rute</span>
-            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition" />
+          <div className="mt-4 pt-3 border-t border-line flex items-center justify-between text-xs text-accent font-medium">
+            <span>Siap dihitung rute</span>
+            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
           </div>
         </Link>
 
         {/* Stok Menipis Count */}
         <Link
           to="/gudang/stock"
-          className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs hover:shadow-md hover:border-emerald-300 transition group"
+          className="bg-surface p-5 rounded-md border border-line hover:border-border-strong transition-colors group"
         >
           <div className="flex justify-between items-start">
             <div>
-              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                Varian Stok Menipis (&le; 50)
+              <p className="text-xs font-medium text-muted">
+                Varian stok menipis (&le; 50)
               </p>
-              <h3 className="text-2xl font-bold text-red-600 mt-1">
+              <h3 className="text-2xl font-bold text-danger-text mt-1">
                 {loading ? '...' : lowStockProducts.length}
               </h3>
             </div>
-            <div className="w-10 h-10 rounded-xl bg-red-50 text-red-600 flex items-center justify-center group-hover:bg-red-600 group-hover:text-white transition">
+            <div className="w-10 h-10 rounded-md bg-danger-bg text-danger flex items-center justify-center transition-colors">
               <AlertTriangle className="w-5 h-5" />
             </div>
           </div>
-          <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-red-600 font-medium">
-            <span>Periksa Inventaris</span>
-            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition" />
+          <div className="mt-4 pt-3 border-t border-line flex items-center justify-between text-xs text-accent font-medium">
+            <span>Periksa inventaris</span>
+            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
           </div>
         </Link>
       </div>
 
       {/* Low Stock Warning Card */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-xs p-6 space-y-4">
-        <div className="flex justify-between items-center pb-3 border-b border-slate-100">
+      <div className="bg-surface rounded-md border border-line p-5 space-y-4">
+        <div className="flex justify-between items-center pb-3 border-b border-line">
           <div className="flex items-center gap-2">
-            <AlertTriangle className="w-5 h-5 text-amber-500" />
-            <h2 className="text-base font-bold text-slate-900">
-              Peringatan Produk Stok Menipis
+            <AlertTriangle className="w-4 h-4 text-amber-500" />
+            <h2 className="text-sm font-semibold text-ink">
+              Peringatan produk stok menipis
             </h2>
           </div>
           <Link
             to="/gudang/stock"
-            className="text-xs font-semibold text-emerald-600 hover:text-emerald-700 transition"
+            className="text-xs font-medium text-accent hover:underline"
           >
-            Lihat Semua Produk &rarr;
+            Lihat semua produk &rarr;
           </Link>
         </div>
 
         {lowStockProducts.length === 0 ? (
-          <p className="text-xs text-slate-500 py-4 text-center">
+          <p className="text-xs text-muted py-4 text-center">
             Semua produk plastik memiliki stok di atas 50 unit. Aman terkendali.
           </p>
         ) : (
@@ -200,15 +200,15 @@ export const GudangDashboard: React.FC = () => {
             {lowStockProducts.map((p) => (
               <div
                 key={p.id}
-                className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between"
+                className="p-3.5 bg-surface-subtle rounded-md border border-line flex items-center justify-between"
               >
                 <div>
-                  <p className="text-xs font-bold text-slate-900 truncate max-w-[160px]">{p.nama}</p>
-                  <p className="text-[11px] text-slate-500 mt-0.5">{p.berat_per_unit_kg} kg/unit</p>
+                  <p className="text-xs font-medium text-ink truncate max-w-[160px]">{p.nama}</p>
+                  <p className="text-[11px] text-muted mt-0.5">{p.berat_per_unit_kg} kg/unit</p>
                 </div>
                 <span
-                  className={`text-xs font-extrabold px-2.5 py-1 rounded-full ${
-                    p.stok <= 20 ? 'bg-red-100 text-red-800' : 'bg-amber-100 text-amber-800'
+                  className={`text-xs font-semibold px-2 py-0.5 rounded-md ${
+                    p.stok <= 20 ? 'bg-danger-bg text-danger-text' : 'bg-amber-50 text-amber-900 border border-amber-200'
                   }`}
                 >
                   {p.stok} unit

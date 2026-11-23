@@ -79,10 +79,10 @@ export const ProofDetailModal: React.FC<ProofDetailModalProps> = ({
   }, [orderId]);
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-      <div className="bg-white rounded-3xl max-w-lg w-full p-5 sm:p-6 shadow-2xl space-y-4 my-auto border border-slate-100">
+    <div className="fixed inset-0 z-50 bg-ink/50  flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+      <div className="bg-white rounded-md max-w-lg w-full p-5 sm:p-6 shadow-lg space-y-4 my-auto border border-line">
         {/* Header */}
-        <div className="flex justify-between items-start border-b border-slate-100 pb-3">
+        <div className="flex justify-between items-start border-b border-line pb-3">
           <div>
             <div className="flex items-center gap-2">
               <span
@@ -115,16 +115,16 @@ export const ProofDetailModal: React.FC<ProofDetailModalProps> = ({
             <p className="mt-3 text-xs font-medium text-slate-500">Memuat berkas bukti...</p>
           </div>
         ) : errorMsg ? (
-          <div className="p-4 bg-red-50 border border-red-200 rounded-2xl flex items-center gap-3 text-xs text-red-800">
+          <div className="p-4 bg-red-50 border border-red-200 rounded-md flex items-center gap-3 text-xs text-red-800">
             <AlertCircle className="w-4 h-4 flex-shrink-0 text-red-600" />
             <span>{errorMsg}</span>
           </div>
         ) : (
           <div className="space-y-4">
             {/* Metadata Info */}
-            <div className="grid grid-cols-2 gap-2 p-3 bg-slate-50 rounded-2xl text-xs border border-slate-100">
+            <div className="grid grid-cols-2 gap-2 p-3 bg-slate-50 rounded-md text-xs border border-line">
               <div>
-                <span className="text-[10px] text-slate-400 block font-semibold uppercase">
+                <span className="text-[10px] text-slate-400 block font-semibold ">
                   Driver Pengantar
                 </span>
                 <span className="font-bold text-slate-800">
@@ -132,7 +132,7 @@ export const ProofDetailModal: React.FC<ProofDetailModalProps> = ({
                 </span>
               </div>
               <div>
-                <span className="text-[10px] text-slate-400 block font-semibold uppercase">
+                <span className="text-[10px] text-slate-400 block font-semibold ">
                   Waktu Konfirmasi
                 </span>
                 <span className="font-bold text-slate-800">
@@ -152,7 +152,7 @@ export const ProofDetailModal: React.FC<ProofDetailModalProps> = ({
                 Foto Bukti / Nota Penerimaan:
               </span>
               {photoSignedUrl ? (
-                <div className="rounded-2xl overflow-hidden border border-slate-200 bg-slate-900 flex items-center justify-center">
+                <div className="rounded-md overflow-hidden border border-line bg-slate-900 flex items-center justify-center">
                   <img
                     src={photoSignedUrl}
                     alt="Foto Bukti"
@@ -170,7 +170,7 @@ export const ProofDetailModal: React.FC<ProofDetailModalProps> = ({
                 Tanda Tangan Digital Penerima:
               </span>
               {ttdSignedUrl ? (
-                <div className="rounded-2xl overflow-hidden border border-slate-200 bg-white p-2 flex items-center justify-center">
+                <div className="rounded-md overflow-hidden border border-line bg-white p-2 flex items-center justify-center">
                   <img
                     src={ttdSignedUrl}
                     alt="Tanda Tangan Digital"
@@ -184,8 +184,8 @@ export const ProofDetailModal: React.FC<ProofDetailModalProps> = ({
 
             {/* Catatan Driver */}
             {data?.catatan && (
-              <div className="p-3 bg-amber-50/70 border border-amber-200 rounded-2xl text-xs text-amber-900">
-                <span className="font-bold block text-[10px] uppercase text-amber-700">
+              <div className="p-3 bg-amber-50/70 border border-amber-200 rounded-md text-xs text-amber-900">
+                <span className="font-bold block text-[10px]  text-amber-700">
                   Catatan Driver di Lapangan:
                 </span>
                 <p className="mt-0.5">{data.catatan}</p>
@@ -194,10 +194,10 @@ export const ProofDetailModal: React.FC<ProofDetailModalProps> = ({
           </div>
         )}
 
-        <div className="pt-2 border-t border-slate-100 flex justify-end">
+        <div className="pt-2 border-t border-line flex justify-end">
           <button
             onClick={onClose}
-            className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold text-xs transition"
+            className="px-4 py-2 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold text-xs transition"
           >
             Tutup
           </button>

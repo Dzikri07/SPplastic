@@ -22,21 +22,21 @@ export const GudangLayout: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col">
+    <div className="min-h-screen bg-surface-subtle flex flex-col text-ink">
       {/* Top Header Navbar */}
-      <header className="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-xs">
+      <header className="bg-petrol-900 text-white sticky top-0 z-30 border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Brand Logo */}
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-emerald-600 flex items-center justify-center text-white shadow-md shadow-emerald-500/20">
-                <PackageCheck className="w-6 h-6" />
+              <div className="w-9 h-9 rounded-md bg-white/10 flex items-center justify-center text-mint-300">
+                <PackageCheck className="w-5 h-5" />
               </div>
               <div>
-                <span className="font-bold text-slate-900 tracking-tight block text-base leading-tight">
-                  CV SP Plastik
+                <span className="font-display font-bold text-white tracking-tight block text-base leading-tight">
+                  CV Saripan Plastik
                 </span>
-                <span className="text-[11px] text-emerald-700 font-medium block">
+                <span className="text-xs text-mint-300/80 font-medium block">
                   Logistik & Tim Gudang
                 </span>
               </div>
@@ -51,10 +51,10 @@ export const GudangLayout: React.FC = () => {
                     key={item.name}
                     to={item.href}
                     className={({ isActive }) =>
-                      `flex items-center gap-2 px-3.5 py-2 rounded-xl text-sm font-medium transition ${
+                      `flex items-center gap-2 px-3.5 py-2 rounded-md text-sm font-medium transition-colors border-b-2 ${
                         isActive
-                          ? 'bg-emerald-50 text-emerald-800 font-semibold shadow-xs'
-                          : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                          ? 'border-mint-300 text-white bg-white/10'
+                          : 'border-transparent text-white/75 hover:text-white hover:bg-white/5'
                       }`
                     }
                   >
@@ -66,19 +66,21 @@ export const GudangLayout: React.FC = () => {
             </nav>
 
             {/* User Info & Logout */}
-            <div className="hidden md:flex items-center gap-3 border-l border-slate-200 pl-4">
+            <div className="hidden md:flex items-center gap-3 border-l border-white/15 pl-4">
               <div className="text-right">
-                <span className="block text-xs font-semibold text-slate-800">
+                <span className="block text-xs font-semibold text-white">
                   {profile?.nama || profile?.username}
                 </span>
-                <span className="block text-[10px] text-emerald-700 font-semibold uppercase">
+                <span className="block text-[11px] text-mint-300/80">
                   Tim Gudang
                 </span>
               </div>
               <button
+                type="button"
                 onClick={() => logout()}
                 title="Keluar"
-                className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition"
+                aria-label="Keluar dari akun"
+                className="p-2 text-white/70 hover:text-white hover:bg-white/10 rounded-md transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-mint-300"
               >
                 <LogOut className="w-4 h-4" />
               </button>
@@ -87,8 +89,10 @@ export const GudangLayout: React.FC = () => {
             {/* Mobile Menu Button */}
             <div className="flex md:hidden">
               <button
+                type="button"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition"
+                aria-label={mobileMenuOpen ? 'Tutup navigasi' : 'Buka navigasi'}
+                className="p-2 text-white hover:bg-white/10 rounded-md transition-colors"
               >
                 {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
               </button>
@@ -98,7 +102,7 @@ export const GudangLayout: React.FC = () => {
 
         {/* Mobile Dropdown Menu */}
         {mobileMenuOpen && (
-          <div className="md:hidden border-t border-slate-200 bg-white px-4 pt-2 pb-4 space-y-1 animate-fadeIn">
+          <div className="md:hidden border-t border-white/10 bg-petrol-900 px-4 pt-2 pb-4 space-y-1">
             {navigation.map((item) => {
               const Icon = item.icon;
               return (
@@ -107,27 +111,28 @@ export const GudangLayout: React.FC = () => {
                   to={item.href}
                   onClick={() => setMobileMenuOpen(false)}
                   className={({ isActive }) =>
-                    `flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition ${
+                    `flex items-center gap-3 px-3.5 py-2.5 rounded-md text-sm font-medium transition-colors ${
                       isActive
-                        ? 'bg-emerald-50 text-emerald-800 font-semibold'
-                        : 'text-slate-700 hover:bg-slate-100'
+                        ? 'bg-white/10 text-white font-semibold'
+                        : 'text-white/75 hover:bg-white/5 hover:text-white'
                     }`
                   }
                 >
-                  <Icon className="w-5 h-5 text-emerald-600" />
+                  <Icon className="w-5 h-5 text-mint-300" />
                   <span>{item.name}</span>
                 </NavLink>
               );
             })}
 
-            <div className="pt-3 mt-2 border-t border-slate-100 flex items-center justify-between">
+            <div className="pt-3 mt-2 border-t border-white/10 flex items-center justify-between">
               <div>
-                <p className="text-xs font-semibold text-slate-800">{profile?.nama}</p>
-                <p className="text-[11px] text-emerald-700 font-bold uppercase">Tim Gudang</p>
+                <p className="text-xs font-semibold text-white">{profile?.nama}</p>
+                <p className="text-[11px] text-mint-300/80">Tim Gudang</p>
               </div>
               <button
+                type="button"
                 onClick={() => logout()}
-                className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-red-600 bg-red-50 hover:bg-red-100 rounded-lg font-medium transition"
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-white bg-white/10 hover:bg-white/20 rounded-md font-medium transition-colors"
               >
                 <LogOut className="w-3.5 h-3.5" />
                 <span>Keluar</span>

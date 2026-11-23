@@ -258,10 +258,10 @@ export const DeliveryConfirmationModal: React.FC<DeliveryConfirmationModalProps>
     (status === 'diterima' || catatan.trim().length > 0);
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-      <div className="bg-white rounded-3xl max-w-lg w-full p-5 sm:p-6 shadow-2xl space-y-4 my-auto border border-slate-100">
+    <div className="fixed inset-0 z-50 bg-ink/50  flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+      <div className="bg-white rounded-md max-w-lg w-full p-5 sm:p-6 shadow-lg space-y-4 my-auto border border-line">
         {/* Modal Header */}
-        <div className="flex justify-between items-start border-b border-slate-100 pb-3">
+        <div className="flex justify-between items-start border-b border-line pb-3">
           <div>
             <div className="flex items-center gap-2">
               <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-blue-100 text-blue-800">
@@ -287,7 +287,7 @@ export const DeliveryConfirmationModal: React.FC<DeliveryConfirmationModalProps>
 
         {/* Error Alert with Retry */}
         {uploadError && (
-          <div className="p-3.5 bg-red-50 border border-red-200 rounded-2xl flex items-start gap-3 text-xs text-red-800">
+          <div className="p-3.5 bg-red-50 border border-red-200 rounded-md flex items-start gap-3 text-xs text-red-800">
             <AlertCircle className="w-4 h-4 flex-shrink-0 text-red-600 mt-0.5" />
             <div className="flex-1">
               <p className="font-semibold">Pengunggahan Terkendala</p>
@@ -304,10 +304,10 @@ export const DeliveryConfirmationModal: React.FC<DeliveryConfirmationModalProps>
               type="button"
               disabled={isUploading}
               onClick={() => setStatus('diterima')}
-              className={`p-3 rounded-2xl border text-left flex items-center gap-2.5 transition ${
+              className={`p-3 rounded-md border text-left flex items-center gap-2.5 transition ${
                 status === 'diterima'
                   ? 'border-emerald-500 bg-emerald-50/70 text-emerald-900 ring-2 ring-emerald-500/20'
-                  : 'border-slate-200 hover:border-slate-300 text-slate-700'
+                  : 'border-line hover:border-line text-slate-700'
               }`}
             >
               <CheckCircle2
@@ -325,10 +325,10 @@ export const DeliveryConfirmationModal: React.FC<DeliveryConfirmationModalProps>
               type="button"
               disabled={isUploading}
               onClick={() => setStatus('tidak_lengkap')}
-              className={`p-3 rounded-2xl border text-left flex items-center gap-2.5 transition ${
+              className={`p-3 rounded-md border text-left flex items-center gap-2.5 transition ${
                 status === 'tidak_lengkap'
                   ? 'border-amber-500 bg-amber-50/70 text-amber-900 ring-2 ring-amber-500/20'
-                  : 'border-slate-200 hover:border-slate-300 text-slate-700'
+                  : 'border-line hover:border-line text-slate-700'
               }`}
             >
               <AlertTriangle
@@ -368,7 +368,7 @@ export const DeliveryConfirmationModal: React.FC<DeliveryConfirmationModalProps>
           />
 
           {photoPreviewUrl ? (
-            <div className="relative rounded-2xl overflow-hidden border border-slate-200 bg-slate-900 max-h-48 flex items-center justify-center group">
+            <div className="relative rounded-md overflow-hidden border border-line bg-slate-900 max-h-48 flex items-center justify-center group">
               <img
                 src={photoPreviewUrl}
                 alt="Bukti Pengiriman"
@@ -378,7 +378,7 @@ export const DeliveryConfirmationModal: React.FC<DeliveryConfirmationModalProps>
                 type="button"
                 disabled={isUploading}
                 onClick={() => fileInputRef.current?.click()}
-                className="absolute bottom-2.5 right-2.5 bg-black/75 hover:bg-black text-white px-3 py-1.5 rounded-xl text-xs font-semibold backdrop-blur-xs flex items-center gap-1.5 transition shadow-md"
+                className="absolute bottom-2.5 right-2.5 bg-black/75 hover:bg-black text-white px-3 py-1.5 rounded-md text-xs font-semibold  flex items-center gap-1.5 transition shadow-md"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
                 <span>Foto Ulang</span>
@@ -389,7 +389,7 @@ export const DeliveryConfirmationModal: React.FC<DeliveryConfirmationModalProps>
               type="button"
               disabled={isCompressing || isUploading}
               onClick={() => fileInputRef.current?.click()}
-              className="w-full py-6 px-4 border-2 border-dashed border-slate-300 hover:border-blue-500 rounded-2xl flex flex-col items-center justify-center gap-2 bg-slate-50 hover:bg-blue-50/50 transition group disabled:opacity-50"
+              className="w-full py-6 px-4 border-2 border-dashed border-line hover:border-blue-500 rounded-md flex flex-col items-center justify-center gap-2 bg-slate-50 hover:bg-blue-50/50 transition group disabled:opacity-50"
             >
               {isCompressing ? (
                 <>
@@ -435,7 +435,7 @@ export const DeliveryConfirmationModal: React.FC<DeliveryConfirmationModalProps>
             </button>
           </div>
 
-          <div className="rounded-2xl border border-slate-300 overflow-hidden bg-white shadow-inner relative">
+          <div className="rounded-md border border-line overflow-hidden bg-white shadow-inner relative">
             <canvas
               ref={canvasRef}
               onPointerDown={handlePointerDown}
@@ -479,17 +479,17 @@ export const DeliveryConfirmationModal: React.FC<DeliveryConfirmationModalProps>
                 ? 'Jelaskan kendala: barang retur, toko tutup, atau jumlah kurang...'
                 : 'Catatan tambahan (opsional)...'
             }
-            className="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
+            className="w-full px-3 py-2 text-xs rounded-md border border-line focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
           />
         </div>
 
         {/* Modal Actions */}
-        <div className="pt-2 border-t border-slate-100 flex items-center justify-between gap-3">
+        <div className="pt-2 border-t border-line flex items-center justify-between gap-3">
           <button
             type="button"
             disabled={isUploading}
             onClick={onClose}
-            className="px-4 py-2.5 rounded-xl border border-slate-300 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition disabled:opacity-50"
+            className="px-4 py-2.5 rounded-md border border-line text-xs font-semibold text-slate-700 hover:bg-slate-50 transition disabled:opacity-50"
           >
             Batal
           </button>
@@ -498,7 +498,7 @@ export const DeliveryConfirmationModal: React.FC<DeliveryConfirmationModalProps>
             type="button"
             disabled={!isFormValid}
             onClick={handleSubmitConfirmation}
-            className="flex-1 py-2.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 disabled:bg-slate-200 disabled:text-slate-400 text-white text-xs font-bold transition shadow-md shadow-blue-500/20 flex items-center justify-center gap-2"
+            className="flex-1 py-2.5 px-4 rounded-md bg-blue-600 hover:bg-blue-700 disabled:bg-slate-200 disabled:text-slate-400 text-white text-xs font-bold transition shadow-md shadow-blue-500/20 flex items-center justify-center gap-2"
           >
             {isUploading ? (
               <>

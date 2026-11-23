@@ -76,170 +76,172 @@ export const GudangOrdersPage: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Page Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-slate-900">Konfirmasi Kesiapan Pesanan</h1>
-        <p className="text-sm text-slate-500 mt-0.5">
-          Periksa fisik pesanan di gudang dan ubah status menjadi "Siap Kirim" atau "Belum Siap".
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-5 border-b border-line">
+        <div>
+          <h1 className="text-2xl font-bold text-ink tracking-tight">Konfirmasi kesiapan pesanan</h1>
+          <p className="text-sm text-muted mt-1">
+            Periksa fisik pesanan di gudang dan ubah status menjadi siap kirim atau belum siap.
+          </p>
+        </div>
       </div>
 
       {/* Notifications */}
       {successMsg && (
-        <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center gap-3 text-sm text-emerald-800">
-          <CheckCircle2 className="w-5 h-5 flex-shrink-0 text-emerald-600" />
+        <div role="alert" className="p-4 bg-emerald-50 border border-emerald-200 border-l-4 border-l-emerald-600 rounded-md flex items-center gap-3 text-sm text-emerald-800">
+          <CheckCircle2 className="w-5 h-5 shrink-0 text-emerald-600" />
           <span>{successMsg}</span>
         </div>
       )}
 
       {errorMsg && (
-        <div className="p-4 bg-red-50 border border-red-200 rounded-xl flex items-center gap-3 text-sm text-red-800">
-          <AlertCircle className="w-5 h-5 flex-shrink-0 text-red-600" />
+        <div role="alert" className="p-4 bg-danger-bg border border-danger/20 border-l-4 border-l-danger rounded-md flex items-center gap-3 text-sm text-danger-text">
+          <AlertCircle className="w-5 h-5 shrink-0 text-danger" />
           <span>{errorMsg}</span>
         </div>
       )}
 
       {/* Filter Bar */}
-      <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs flex flex-col sm:flex-row justify-between items-center gap-4">
+      <div className="bg-surface p-4 rounded-md border border-line flex flex-col sm:flex-row justify-between items-center gap-4">
         <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
           <div className="relative w-full sm:w-64">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <Search className="w-4 h-4 text-muted absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Cari toko pelanggan..."
-              className="w-full pl-9 pr-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:bg-white transition"
+              className="w-full pl-9 pr-3.5 h-11 bg-surface border border-line rounded-md text-sm text-ink placeholder:text-subtle focus:outline-hidden focus:border-accent focus:ring-3 focus:ring-accent/20 transition-colors"
             />
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
             <button
               onClick={() => setStatusFilter('all')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
+              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
                 statusFilter === 'all'
-                  ? 'bg-slate-800 text-white'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  ? 'bg-ink text-white'
+                  : 'bg-surface-subtle text-muted hover:text-ink hover:bg-surface-muted border border-line'
               }`}
             >
               Semua
             </button>
             <button
               onClick={() => setStatusFilter('baru')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
+              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
                 statusFilter === 'baru'
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-blue-50 text-blue-700 hover:bg-blue-100'
+                  ? 'bg-accent text-white'
+                  : 'bg-accent/10 text-accent hover:bg-accent/20 border border-accent/20'
               }`}
             >
               Baru
             </button>
             <button
               onClick={() => setStatusFilter('belum_siap')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
+              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
                 statusFilter === 'belum_siap'
                   ? 'bg-amber-600 text-white'
-                  : 'bg-amber-50 text-amber-700 hover:bg-amber-100'
+                  : 'bg-amber-50 text-amber-900 hover:bg-amber-100 border border-amber-200'
               }`}
             >
-              Belum Siap
+              Belum siap
             </button>
             <button
               onClick={() => setStatusFilter('siap')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
+              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
                 statusFilter === 'siap'
-                  ? 'bg-emerald-600 text-white'
-                  : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
+                  ? 'bg-emerald-700 text-white'
+                  : 'bg-emerald-50 text-emerald-800 hover:bg-emerald-100 border border-emerald-200'
               }`}
             >
-              Siap Kirim
+              Siap kirim
             </button>
           </div>
         </div>
 
-        <div className="text-xs text-slate-500 font-medium whitespace-nowrap">
-          Antrean: <span className="font-bold text-slate-800">{filtered.length}</span> pesanan
+        <div className="text-xs text-muted whitespace-nowrap">
+          Antrean: <span className="font-semibold text-ink">{filtered.length}</span> pesanan
         </div>
       </div>
 
       {/* Orders List */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
+      <div className="bg-surface rounded-md border border-line overflow-hidden">
         {loading ? (
-          <div className="p-12 text-center text-slate-500 flex flex-col items-center gap-3">
-            <div className="w-8 h-8 border-3 border-emerald-600 border-t-transparent rounded-full animate-spin" />
+          <div className="p-12 text-center text-muted flex flex-col items-center gap-3">
+            <div className="w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin" />
             <p className="text-sm">Memuat antrean pesanan...</p>
           </div>
         ) : filtered.length === 0 ? (
-          <div className="p-12 text-center text-slate-500">
-            <ShoppingCart className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-            <p className="font-semibold text-slate-700">Tidak ada antrean pesanan</p>
-            <p className="text-xs text-slate-400 mt-1">
+          <div className="p-12 text-center text-muted">
+            <ShoppingCart className="w-12 h-12 text-subtle mx-auto mb-3" />
+            <p className="font-semibold text-ink">Tidak ada antrean pesanan</p>
+            <p className="text-xs text-muted mt-1">
               Seluruh pesanan telah diproses atau belum ada pesanan baru masuk dari tim admin.
             </p>
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm text-slate-600">
-              <thead className="bg-slate-50 text-slate-700 text-xs font-semibold uppercase tracking-wider border-b border-slate-200">
+            <table className="w-full text-left text-sm text-ink">
+              <thead className="bg-surface-subtle text-muted text-xs font-medium border-b border-line">
                 <tr>
-                  <th className="py-3.5 px-4">Tanggal</th>
-                  <th className="py-3.5 px-4">Toko Pelanggan</th>
-                  <th className="py-3.5 px-4 text-center">Status</th>
-                  <th className="py-3.5 px-4">Muatan & Item</th>
-                  <th className="py-3.5 px-4 text-right">Aksi Konfirmasi Gudang</th>
+                  <th className="py-3 px-4">Tanggal</th>
+                  <th className="py-3 px-4">Toko pelanggan</th>
+                  <th className="py-3 px-4 text-center">Status</th>
+                  <th className="py-3 px-4">Muatan & item</th>
+                  <th className="py-3 px-4 text-right">Aksi konfirmasi gudang</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-line">
                 {filtered.map((o) => {
                   const isUpdating = updatingId === o.id;
 
                   return (
-                    <tr key={o.id} className="hover:bg-slate-50/80 transition">
-                      <td className="py-3.5 px-4 font-mono text-xs text-slate-700 whitespace-nowrap">
+                    <tr key={o.id} className="hover:bg-surface-subtle transition-colors">
+                      <td className="py-3 px-4 font-mono text-xs text-muted whitespace-nowrap">
                         {o.tanggal}
                       </td>
-                      <td className="py-3.5 px-4">
-                        <div className="font-semibold text-slate-900">
+                      <td className="py-3 px-4">
+                        <div className="font-medium text-ink">
                           {o.customers?.nama_toko}
                         </div>
-                        <div className="text-[11px] text-slate-500 truncate max-w-xs">
+                        <div className="text-xs text-muted truncate max-w-xs">
                           {o.customers?.alamat}
                         </div>
                       </td>
-                      <td className="py-3.5 px-4 text-center">
+                      <td className="py-3 px-4 text-center">
                         {o.status === 'siap' && (
-                          <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800">
-                            Siap Kirim
+                          <span className="px-2.5 py-0.5 rounded-md text-xs font-medium bg-emerald-50 text-emerald-800 border border-emerald-200">
+                            Siap kirim
                           </span>
                         )}
                         {o.status === 'belum_siap' && (
-                          <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-800">
-                            Belum Siap
+                          <span className="px-2.5 py-0.5 rounded-md text-xs font-medium bg-amber-50 text-amber-900 border border-amber-200">
+                            Belum siap
                           </span>
                         )}
                         {o.status === 'baru' && (
-                          <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-800">
-                            Baru Masuk
+                          <span className="px-2.5 py-0.5 rounded-md text-xs font-medium bg-accent/10 text-accent border border-accent/20">
+                            Baru masuk
                           </span>
                         )}
                       </td>
-                      <td className="py-3.5 px-4">
+                      <td className="py-3 px-4">
                         <div className="flex items-center gap-2">
-                          <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 bg-slate-100 text-slate-700 rounded-md">
-                            <Package className="w-3 h-3 text-slate-500" />
+                          <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 bg-surface-muted text-muted rounded-md border border-line">
+                            <Package className="w-3 h-3 text-muted" />
                             {(o.order_items || []).length} jenis
                           </span>
-                          <span className="inline-flex items-center gap-1 text-xs font-bold px-2 py-0.5 bg-blue-50 text-blue-700 rounded-md">
-                            <Weight className="w-3 h-3 text-blue-600" />
+                          <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 bg-accent/10 text-accent rounded-md border border-accent/20">
+                            <Weight className="w-3 h-3 text-accent" />
                             {Number(o.total_muatan_kg).toFixed(1)} kg
                           </span>
                         </div>
                       </td>
-                      <td className="py-3.5 px-4 text-right">
+                      <td className="py-3 px-4 text-right">
                         <div className="inline-flex items-center gap-2">
                           <button
                             onClick={() => setSelectedOrder(o)}
                             title="Periksa Item Pesanan"
-                            className="p-1.5 text-slate-600 hover:bg-slate-100 rounded-lg transition"
+                            className="p-1.5 text-muted hover:text-ink hover:bg-surface-muted rounded-md transition-colors"
                           >
                             <Eye className="w-4 h-4" />
                           </button>
@@ -247,7 +249,7 @@ export const GudangOrdersPage: React.FC = () => {
                           <button
                             disabled={isUpdating || o.status === 'siap'}
                             onClick={() => handleStatusChange(o.id, 'siap')}
-                            className="flex items-center gap-1 px-3 py-1 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-40 text-white rounded-lg text-xs font-semibold transition shadow-xs"
+                            className="flex items-center gap-1 px-3 py-1.5 bg-accent hover:bg-accent-hover disabled:opacity-40 text-white rounded-md text-xs font-medium transition-colors"
                           >
                             <CheckCircle2 className="w-3.5 h-3.5" />
                             <span>Siap</span>
@@ -256,10 +258,10 @@ export const GudangOrdersPage: React.FC = () => {
                           <button
                             disabled={isUpdating || o.status === 'belum_siap'}
                             onClick={() => handleStatusChange(o.id, 'belum_siap')}
-                            className="flex items-center gap-1 px-3 py-1 bg-amber-600 hover:bg-amber-700 disabled:opacity-40 text-white rounded-lg text-xs font-semibold transition shadow-xs"
+                            className="flex items-center gap-1 px-3 py-1.5 bg-amber-600 hover:bg-amber-700 disabled:opacity-40 text-white rounded-md text-xs font-medium transition-colors"
                           >
                             <Clock className="w-3.5 h-3.5" />
-                            <span>Belum Siap</span>
+                            <span>Belum siap</span>
                           </button>
                         </div>
                       </td>
@@ -274,18 +276,18 @@ export const GudangOrdersPage: React.FC = () => {
 
       {/* Modal Detail Item Pesanan untuk Pengecekan Fisik Gudang */}
       {selectedOrder && (
-        <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-xl border border-slate-200 max-w-lg w-full overflow-hidden animate-scaleIn">
-            <div className="flex justify-between items-center px-6 py-4 border-b border-slate-200">
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-ink/50 flex items-center justify-center p-4">
+          <div className="bg-surface rounded-md shadow-lg border border-line max-w-lg w-full overflow-hidden">
+            <div className="flex justify-between items-center px-6 py-4 border-b border-line">
               <div>
-                <h2 className="text-base font-bold text-slate-900">
-                  Periksa Barang: {selectedOrder.customers?.nama_toko}
+                <h2 className="text-base font-bold text-ink">
+                  Periksa barang: {selectedOrder.customers?.nama_toko}
                 </h2>
-                <p className="text-xs text-slate-500">Tanggal: {selectedOrder.tanggal}</p>
+                <p className="text-xs text-muted">Tanggal: {selectedOrder.tanggal}</p>
               </div>
               <button
                 onClick={() => setSelectedOrder(null)}
-                className="p-1.5 text-slate-400 hover:text-slate-700 rounded-lg transition"
+                className="p-1.5 text-muted hover:text-ink rounded-md transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -293,25 +295,25 @@ export const GudangOrdersPage: React.FC = () => {
 
             <div className="p-6 space-y-4">
               {selectedOrder.catatan && (
-                <div className="text-xs text-slate-700 p-3 bg-amber-50 border border-amber-200 rounded-xl">
-                  <span className="font-bold">Catatan Pengiriman:</span> {selectedOrder.catatan}
+                <div className="text-xs text-ink p-3 bg-amber-50 border border-amber-200 rounded-md">
+                  <span className="font-semibold">Catatan pengiriman:</span> {selectedOrder.catatan}
                 </div>
               )}
 
               <div>
-                <p className="text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">
-                  Daftar Barang yang Perlu Disiapkan
+                <p className="text-xs font-medium text-muted mb-2">
+                  Daftar barang yang perlu disiapkan
                 </p>
-                <div className="border border-slate-200 rounded-xl overflow-hidden divide-y divide-slate-100 text-xs">
+                <div className="border border-line rounded-md overflow-hidden divide-y divide-line text-xs">
                   {(selectedOrder.order_items || []).map((it) => (
                     <div key={it.id} className="p-3 flex justify-between items-center">
                       <div>
-                        <p className="font-semibold text-slate-900">{it.products?.nama}</p>
-                        <p className="text-slate-500 text-[11px]">
-                          Kuantitas Diminta: <span className="font-bold text-slate-800">{it.qty} unit</span> &bull; Stok Gudang: {it.products?.stok} unit
+                        <p className="font-medium text-ink">{it.products?.nama}</p>
+                        <p className="text-muted text-[11px]">
+                          Kuantitas diminta: <span className="font-semibold text-ink">{it.qty} unit</span> &bull; Stok gudang: {it.products?.stok} unit
                         </p>
                       </div>
-                      <span className="font-mono font-bold text-slate-800">
+                      <span className="font-mono font-semibold text-ink">
                         {Number(it.berat_kg).toFixed(1)} kg
                       </span>
                     </div>
@@ -320,28 +322,28 @@ export const GudangOrdersPage: React.FC = () => {
               </div>
 
               {/* Total Muatan */}
-              <div className="p-3 bg-slate-100 rounded-xl flex items-center justify-between text-xs font-semibold text-slate-800">
-                <span>Total Berat Muatan:</span>
-                <span className="text-sm font-bold text-blue-700 font-mono">
+              <div className="p-3 bg-surface-subtle border border-line rounded-md flex items-center justify-between text-xs font-medium text-ink">
+                <span>Total berat muatan:</span>
+                <span className="text-sm font-bold text-accent font-mono">
                   {Number(selectedOrder.total_muatan_kg).toFixed(2)} kg
                 </span>
               </div>
             </div>
 
-            <div className="px-6 py-4 bg-slate-50 border-t border-slate-200 flex justify-between items-center">
-              <span className="text-xs text-slate-500">Ubah status pesanan ini:</span>
+            <div className="px-6 py-4 bg-surface-subtle border-t border-line flex justify-between items-center">
+              <span className="text-xs text-muted">Ubah status pesanan ini:</span>
               <div className="flex gap-2">
                 <button
                   onClick={() => handleStatusChange(selectedOrder.id, 'belum_siap')}
-                  className="px-3.5 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-xs font-semibold transition"
+                  className="px-3.5 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-md text-xs font-medium transition-colors"
                 >
-                  Tandai Belum Siap
+                  Tandai belum siap
                 </button>
                 <button
                   onClick={() => handleStatusChange(selectedOrder.id, 'siap')}
-                  className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold transition"
+                  className="px-3.5 py-1.5 bg-accent hover:bg-accent-hover text-white rounded-md text-xs font-medium transition-colors"
                 >
-                  Tandai Siap Kirim
+                  Tandai siap kirim
                 </button>
               </div>
             </div>

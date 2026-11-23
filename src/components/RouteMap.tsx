@@ -78,7 +78,7 @@ export const RouteMap: React.FC<RouteMapProps> = ({
   });
 
   return (
-    <div className="w-full rounded-2xl overflow-hidden border border-slate-300 shadow-sm relative z-0">
+    <div className="w-full rounded-md overflow-hidden border border-border relative z-0">
       <MapContainer
         center={[depot.lat, depot.lng]}
         zoom={12}

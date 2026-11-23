@@ -115,8 +115,8 @@ export const AdminDashboard: React.FC = () => {
       )}
 
       {/* Blok Utama: Perlu Tindakan */}
-      <section aria-labelledby="action-needed-heading" className="p-5 bg-surface border border-line rounded-lg">
-        <h2 id="action-needed-heading" className="text-xs font-medium text-muted uppercase tracking-wider mb-2">
+      <section aria-labelledby="action-needed-heading" className="p-5 bg-surface border border-line rounded-md">
+        <h2 id="action-needed-heading" className="text-xs font-medium text-muted mb-2">
           Perlu tindakan
         </h2>
         {loading ? (
@@ -164,7 +164,7 @@ export const AdminDashboard: React.FC = () => {
         <h2 id="summary-heading" className="sr-only">
           Ringkasan operasional
         </h2>
-        <div className="grid grid-cols-2 lg:grid-cols-4 border border-line rounded-lg bg-surface divide-y sm:divide-y-0 sm:divide-x divide-line">
+        <div className="grid grid-cols-2 lg:grid-cols-4 border border-line rounded-md bg-surface divide-y sm:divide-y-0 sm:divide-x divide-line">
           <Link
             to="/admin/orders"
             className="p-5 hover:bg-surface-subtle transition-colors focus:outline-hidden focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
@@ -205,7 +205,7 @@ export const AdminDashboard: React.FC = () => {
       </section>
 
       {/* Tentang Sistem: Details tertutup secara default */}
-      <details className="border border-line rounded-lg bg-surface p-4 group">
+      <details className="border border-line rounded-md bg-surface p-4 group">
         <summary className="text-sm font-semibold text-ink cursor-pointer select-none focus:outline-hidden focus-visible:ring-2 focus-visible:ring-accent rounded-md">
           Tentang sistem
         </summary>

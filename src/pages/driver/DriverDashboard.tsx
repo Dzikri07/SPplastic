@@ -150,19 +150,19 @@ export const DriverDashboard: React.FC = () => {
     totalStopsCount > 0 ? Math.round((completedStopsCount / totalStopsCount) * 100) : 0;
 
   return (
-    <div className="min-h-screen bg-slate-100 flex flex-col font-sans">
+    <div className="min-h-screen bg-surface-subtle flex flex-col font-sans">
       {/* Top Mobile Header */}
-      <header className="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-xs">
+      <header className="bg-surface border-b border-line sticky top-0 z-30">
         <div className="max-w-2xl mx-auto px-4 py-3 flex justify-between items-center">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-blue-600 flex items-center justify-center text-white shadow-md shadow-blue-500/20">
+            <div className="w-10 h-10 rounded-md bg-accent flex items-center justify-center text-white">
               <Truck className="w-5 h-5" />
             </div>
             <div>
-              <span className="text-xs font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full inline-block">
+              <span className="text-xs font-medium text-accent bg-accent/10 px-2 py-0.5 rounded-md inline-block">
                 Driver CV SP Plastik
               </span>
-              <h1 className="text-base font-extrabold text-slate-900 leading-tight">
+              <h1 className="text-base font-bold text-ink leading-tight">
                 {profile?.nama || profile?.username || 'Driver'}
               </h1>
             </div>
@@ -173,14 +173,14 @@ export const DriverDashboard: React.FC = () => {
               onClick={fetchAssignedRoutes}
               disabled={loading}
               title="Perbarui Data"
-              className="p-2 text-slate-600 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition"
+              className="p-2 text-muted hover:text-ink hover:bg-surface-muted rounded-md transition-colors"
             >
               <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
             </button>
             <button
               onClick={() => logout()}
               title="Keluar"
-              className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition"
+              className="p-2 text-muted hover:text-danger-text hover:bg-danger-bg rounded-md transition-colors"
             >
               <LogOut className="w-4 h-4" />
             </button>
@@ -192,32 +192,32 @@ export const DriverDashboard: React.FC = () => {
       <main className="flex-1 max-w-2xl w-full mx-auto p-4 space-y-4">
         {/* Error Alert */}
         {errorMsg && (
-          <div className="p-4 bg-red-50 border border-red-200 rounded-2xl flex items-center gap-3 text-xs text-red-800">
-            <AlertTriangle className="w-5 h-5 flex-shrink-0 text-red-600" />
+          <div role="alert" className="p-4 bg-danger-bg border border-danger/20 border-l-4 border-l-danger rounded-md flex items-center gap-3 text-xs text-danger-text">
+            <AlertTriangle className="w-5 h-5 shrink-0 text-danger" />
             <span>{errorMsg}</span>
           </div>
         )}
 
         {loading ? (
           <div className="py-20 flex flex-col items-center justify-center">
-            <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
-            <p className="mt-3 text-xs font-semibold text-slate-500">Memuat rute pengiriman...</p>
+            <div className="w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin" />
+            <p className="mt-3 text-xs font-medium text-muted">Memuat rute pengiriman...</p>
           </div>
         ) : routes.length === 0 ? (
           /* Empty State */
-          <div className="bg-white rounded-3xl p-8 border border-slate-200 text-center shadow-xs space-y-3">
-            <div className="w-16 h-16 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mx-auto">
-              <Navigation className="w-8 h-8" />
+          <div className="bg-surface rounded-md p-8 border border-line text-center space-y-3">
+            <div className="w-12 h-12 rounded-full bg-surface-muted text-muted flex items-center justify-center mx-auto">
+              <Navigation className="w-6 h-6" />
             </div>
-            <h2 className="text-base font-bold text-slate-800">Belum Ada Rute yang Ditugaskan</h2>
-            <p className="text-xs text-slate-500 max-w-xs mx-auto">
+            <h2 className="text-base font-bold text-ink">Belum ada rute yang ditugaskan</h2>
+            <p className="text-xs text-muted max-w-xs mx-auto">
               Admin belum menugaskan rute pengiriman baru untuk Anda. Silakan hubungi bagian administrasi distribusi.
             </p>
             <button
               onClick={fetchAssignedRoutes}
-              className="mt-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold shadow-xs transition"
+              className="mt-2 px-4 py-2 bg-accent hover:bg-accent-hover text-white rounded-md text-xs font-medium transition-colors"
             >
-              Periksa Kembali
+              Periksa kembali
             </button>
           </div>
         ) : (
@@ -229,13 +229,13 @@ export const DriverDashboard: React.FC = () => {
                   <button
                     key={r.id}
                     onClick={() => setActiveRouteIndex(idx)}
-                    className={`px-3.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition ${
+                    className={`px-3.5 py-1.5 rounded-md text-xs font-medium whitespace-nowrap transition-colors ${
                       activeRouteIndex === idx
-                        ? 'bg-blue-600 text-white shadow-sm'
-                        : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
+                        ? 'bg-accent text-white'
+                        : 'bg-surface text-ink border border-line hover:bg-surface-subtle'
                     }`}
                   >
-                    Rute #{idx + 1} ({r.stops.length} Toko)
+                    Rute #{idx + 1} ({r.stops.length} toko)
                   </button>
                 ))}
               </div>
@@ -243,54 +243,54 @@ export const DriverDashboard: React.FC = () => {
 
             {/* Active Route Summary Card */}
             {activeRoute && (
-              <div className="bg-white rounded-3xl p-5 border border-slate-200 shadow-sm space-y-3">
+              <div className="bg-surface rounded-md p-5 border border-line space-y-3">
                 <div className="flex justify-between items-start">
                   <div>
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                      Armada Pengiriman
+                    <span className="text-[11px] font-medium text-muted">
+                      Armada pengiriman
                     </span>
-                    <h2 className="text-base font-extrabold text-slate-900 mt-0.5">
+                    <h2 className="text-base font-bold text-ink mt-0.5">
                       {activeRoute.vehicle?.nama || 'Armada Box'}
-                      <span className="ml-2 text-xs font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-md">
+                      <span className="ml-2 text-xs font-medium text-accent bg-accent/10 px-2 py-0.5 rounded-md">
                         {activeRoute.vehicle?.plat || 'No Plat'}
                       </span>
                     </h2>
                   </div>
 
                   <span
-                    className={`px-2.5 py-1 rounded-full text-xs font-bold ${
+                    className={`px-2.5 py-1 rounded-md text-xs font-medium ${
                       activeRoute.status === 'selesai'
-                        ? 'bg-emerald-100 text-emerald-800'
-                        : 'bg-blue-100 text-blue-800'
+                        ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
+                        : 'bg-accent/10 text-accent border border-accent/20'
                     }`}
                   >
-                    {activeRoute.status === 'selesai' ? 'Rute Selesai' : 'Dalam Pengiriman'}
+                    {activeRoute.status === 'selesai' ? 'Rute selesai' : 'Dalam pengiriman'}
                   </span>
                 </div>
 
                 {/* KPI Metrics */}
-                <div className="grid grid-cols-3 gap-2 py-2 border-y border-slate-100 text-center">
+                <div className="grid grid-cols-3 gap-2 py-2 border-y border-line text-center">
                   <div>
-                    <span className="text-[10px] text-slate-400 block font-semibold">
-                      Total Toko
+                    <span className="text-[11px] text-muted block">
+                      Total toko
                     </span>
-                    <span className="text-sm font-bold text-slate-800">
-                      {totalStopsCount} Toko
+                    <span className="text-sm font-bold text-ink">
+                      {totalStopsCount} toko
                     </span>
                   </div>
                   <div>
-                    <span className="text-[10px] text-slate-400 block font-semibold">
-                      Total Jarak
+                    <span className="text-[11px] text-muted block">
+                      Total jarak
                     </span>
-                    <span className="text-sm font-bold text-slate-800">
+                    <span className="text-sm font-bold text-ink">
                       {activeRoute.total_jarak_km} km
                     </span>
                   </div>
                   <div>
-                    <span className="text-[10px] text-slate-400 block font-semibold">
-                      Total Muatan
+                    <span className="text-[11px] text-muted block">
+                      Total muatan
                     </span>
-                    <span className="text-sm font-bold text-slate-800">
+                    <span className="text-sm font-bold text-ink">
                       {activeRoute.total_muatan_kg} kg
                     </span>
                   </div>
@@ -298,16 +298,16 @@ export const DriverDashboard: React.FC = () => {
 
                 {/* Progress Bar */}
                 <div className="space-y-1">
-                  <div className="flex justify-between text-xs font-semibold">
-                    <span className="text-slate-600">Progres Pengantaran:</span>
-                    <span className="text-blue-700">
-                      {completedStopsCount} dari {totalStopsCount} Toko ({progressPercent}%)
+                  <div className="flex justify-between text-xs font-medium">
+                    <span className="text-muted">Progres pengantaran:</span>
+                    <span className="text-accent font-semibold">
+                      {completedStopsCount} dari {totalStopsCount} toko ({progressPercent}%)
                     </span>
                   </div>
-                  <div className="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
+                  <div className="w-full h-2 bg-surface-muted rounded-full overflow-hidden">
                     <div
                       className={`h-full transition-all duration-500 rounded-full ${
-                        progressPercent === 100 ? 'bg-emerald-500' : 'bg-blue-600'
+                        progressPercent === 100 ? 'bg-emerald-600' : 'bg-accent'
                       }`}
                       style={{ width: `${progressPercent}%` }}
                     />
@@ -318,8 +318,8 @@ export const DriverDashboard: React.FC = () => {
 
             {/* Stop List Section */}
             <div className="space-y-3">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 px-1">
-                Urutan Perhentian Toko ({totalStopsCount} Stop):
+              <h3 className="text-xs font-medium text-muted px-1">
+                Urutan perhentian toko ({totalStopsCount} stop):
               </h3>
 
               {activeRoute?.stops.map((stop) => {
@@ -341,24 +341,24 @@ export const DriverDashboard: React.FC = () => {
                 return (
                   <div
                     key={stop.id}
-                    className={`bg-white rounded-3xl p-4 sm:p-5 border transition shadow-xs space-y-3 ${
+                    className={`bg-surface rounded-md p-4 sm:p-5 border transition-colors space-y-3 ${
                       isConfirmed
                         ? isDiterima
                           ? 'border-emerald-200 bg-emerald-50/20'
                           : 'border-amber-200 bg-amber-50/20'
-                        : 'border-slate-200 hover:border-blue-300'
+                        : 'border-line hover:border-border-strong'
                     }`}
                   >
                     {/* Header Stop */}
                     <div className="flex justify-between items-start gap-2">
                       <div className="flex items-start gap-3">
                         <div
-                          className={`w-8 h-8 rounded-xl flex items-center justify-center text-xs font-bold flex-shrink-0 ${
+                          className={`w-8 h-8 rounded-md flex items-center justify-center text-xs font-bold shrink-0 ${
                             isConfirmed
                               ? isDiterima
-                                ? 'bg-emerald-600 text-white shadow-sm'
-                                : 'bg-amber-500 text-white shadow-sm'
-                              : 'bg-blue-600 text-white shadow-sm'
+                                ? 'bg-emerald-700 text-white'
+                                : 'bg-amber-600 text-white'
+                              : 'bg-accent text-white'
                           }`}
                         >
                           {isConfirmed ? (
@@ -373,11 +373,11 @@ export const DriverDashboard: React.FC = () => {
                         </div>
 
                         <div>
-                          <h4 className="text-sm font-extrabold text-slate-900 leading-snug">
+                          <h4 className="text-sm font-bold text-ink leading-snug">
                             {stop.customer?.nama_toko || 'Toko Pelanggan'}
                           </h4>
-                          <p className="text-xs text-slate-500 flex items-start gap-1 mt-0.5">
-                            <MapPin className="w-3.5 h-3.5 flex-shrink-0 text-slate-400 mt-0.5" />
+                          <p className="text-xs text-muted flex items-start gap-1 mt-0.5">
+                            <MapPin className="w-3.5 h-3.5 shrink-0 text-muted mt-0.5" />
                             <span>{stop.customer?.alamat || 'Alamat tidak tersedia'}</span>
                           </p>
                         </div>
@@ -385,38 +385,38 @@ export const DriverDashboard: React.FC = () => {
 
                       {/* Status Badge */}
                       <span
-                        className={`px-2.5 py-1 rounded-full text-[11px] font-bold flex-shrink-0 ${
+                        className={`px-2 py-0.5 rounded-md text-xs font-medium shrink-0 ${
                           isDiterima
-                            ? 'bg-emerald-100 text-emerald-800'
+                            ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
                             : isTidakLengkap
-                            ? 'bg-amber-100 text-amber-800'
-                            : 'bg-blue-100 text-blue-800'
+                            ? 'bg-amber-50 text-amber-900 border border-amber-200'
+                            : 'bg-accent/10 text-accent border border-accent/20'
                         }`}
                       >
                         {isDiterima
                           ? 'Diterima'
                           : isTidakLengkap
-                          ? 'Tidak Lengkap'
+                          ? 'Tidak lengkap'
                           : 'Menunggu'}
                       </span>
                     </div>
 
                     {/* Order Items Info */}
-                    <div className="p-3 bg-slate-50 rounded-2xl text-xs space-y-1.5 border border-slate-100">
-                      <div className="flex justify-between items-center text-slate-600">
-                        <span className="font-semibold flex items-center gap-1.5">
-                          <Package className="w-3.5 h-3.5 text-blue-600" />
-                          <span>Daftar Muatan:</span>
+                    <div className="p-3 bg-surface-subtle rounded-md text-xs space-y-1.5 border border-line">
+                      <div className="flex justify-between items-center text-ink font-medium">
+                        <span className="flex items-center gap-1.5">
+                          <Package className="w-3.5 h-3.5 text-accent" />
+                          <span>Daftar muatan:</span>
                         </span>
-                        <span className="font-bold text-slate-900">
+                        <span>
                           {stop.order?.total_muatan_kg || 0} kg
                         </span>
                       </div>
-                      <div className="space-y-0.5 pl-5 text-[11px] text-slate-600">
+                      <div className="space-y-0.5 pl-5 text-[11px] text-muted">
                         {stop.order?.order_items?.map((item) => (
                           <div key={item.id} className="flex justify-between">
                             <span>{item.product?.nama || 'Produk'}</span>
-                            <span className="font-medium text-slate-700">
+                            <span className="font-medium text-ink">
                               {item.qty} pack ({item.berat_kg} kg)
                             </span>
                           </div>
@@ -430,7 +430,7 @@ export const DriverDashboard: React.FC = () => {
                         href={mapsUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex-1 py-2 px-3 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold text-xs flex items-center justify-center gap-1.5 transition border border-blue-200"
+                        className="flex-1 py-2 px-3 rounded-md bg-surface hover:bg-surface-subtle text-accent border border-line font-medium text-xs flex items-center justify-center gap-1.5 transition-colors"
                       >
                         <Navigation className="w-3.5 h-3.5" />
                         <span>Buka Google Maps</span>
@@ -441,7 +441,7 @@ export const DriverDashboard: React.FC = () => {
                           href={waUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="py-2 px-3 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold text-xs flex items-center justify-center gap-1.5 transition border border-emerald-200"
+                          className="py-2 px-3 rounded-md bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 font-medium text-xs flex items-center justify-center gap-1.5 transition-colors"
                         >
                           <Phone className="w-3.5 h-3.5" />
                           <span>WhatsApp</span>
@@ -450,7 +450,7 @@ export const DriverDashboard: React.FC = () => {
                     </div>
 
                     {/* Delivery Confirmation Trigger */}
-                    <div className="pt-1 border-t border-slate-100">
+                    <div className="pt-1 border-t border-line">
                       {isConfirmed ? (
                         <button
                           type="button"
@@ -460,10 +460,10 @@ export const DriverDashboard: React.FC = () => {
                               namaToko: stop.customer?.nama_toko || 'Toko',
                             })
                           }
-                          className="w-full py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold flex items-center justify-center gap-1.5 transition"
+                          className="w-full py-2 px-3 rounded-md bg-surface-subtle hover:bg-surface-muted text-ink text-xs font-medium border border-line flex items-center justify-center gap-1.5 transition-colors"
                         >
-                          <Eye className="w-3.5 h-3.5 text-slate-500" />
-                          <span>Lihat Bukti Foto & TTD</span>
+                          <Eye className="w-3.5 h-3.5 text-muted" />
+                          <span>Lihat bukti foto & TTD</span>
                         </button>
                       ) : (
                         <button
@@ -478,10 +478,10 @@ export const DriverDashboard: React.FC = () => {
                               totalMuatanKg: stop.order?.total_muatan_kg || 0,
                             })
                           }
-                          className="w-full py-2.5 px-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-md shadow-blue-500/20 flex items-center justify-center gap-2 transition"
+                          className="w-full py-2.5 px-3 rounded-md bg-accent hover:bg-accent-hover text-white text-xs font-medium flex items-center justify-center gap-2 transition-colors min-h-[40px]"
                         >
                           <CheckCircle2 className="w-4 h-4" />
-                          <span>Konfirmasi Penerimaan Barang</span>
+                          <span>Konfirmasi penerimaan barang</span>
                         </button>
                       )}
                     </div>

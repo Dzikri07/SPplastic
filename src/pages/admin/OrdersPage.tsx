@@ -223,19 +223,19 @@ export const OrdersPage: React.FC = () => {
   const getStatusBadge = (status: OrderStatus) => {
     switch (status) {
       case 'baru':
-        return <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-800">Baru</span>;
+        return <span className="px-2.5 py-0.5 rounded-md text-xs font-medium bg-[#EBF5FB] text-[#134E5E] border border-[#BCE1EE]">Baru</span>;
       case 'belum_siap':
-        return <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-800">Belum Siap</span>;
+        return <span className="px-2.5 py-0.5 rounded-md text-xs font-medium bg-[#FEF6E7] text-[#874D00] border border-[#FADBA2]">Belum siap</span>;
       case 'siap':
-        return <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800">Siap Kirim</span>;
+        return <span className="px-2.5 py-0.5 rounded-md text-xs font-medium bg-[#E6F4F1] text-[#0F4E4A] border border-[#BDE3DB]">Siap kirim</span>;
       case 'dalam_pengiriman':
-        return <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-purple-100 text-purple-800">Dalam Pengiriman</span>;
+        return <span className="px-2.5 py-0.5 rounded-md text-xs font-medium bg-surface-muted text-ink border border-border">Dalam pengiriman</span>;
       case 'diterima':
-        return <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-teal-100 text-teal-800">Diterima</span>;
+        return <span className="px-2.5 py-0.5 rounded-md text-xs font-medium bg-[#E6F4F1] text-[#0F4E4A] border border-[#BDE3DB]">Diterima</span>;
       case 'tidak_lengkap':
-        return <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-100 text-red-800">Tidak Lengkap</span>;
+        return <span className="px-2.5 py-0.5 rounded-md text-xs font-medium bg-danger-bg text-danger-text border border-[#FECDCA]">Tidak lengkap</span>;
       default:
-        return <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-800">{status}</span>;
+        return <span className="px-2.5 py-0.5 rounded-md text-xs font-medium bg-surface-muted text-ink border border-border">{status}</span>;
     }
   };
 
@@ -249,83 +249,89 @@ export const OrdersPage: React.FC = () => {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Manajemen Pesanan Distribusi</h1>
-          <p className="text-sm text-slate-500 mt-0.5">
+          <h1 className="font-display text-2xl font-bold tracking-tight text-ink">Manajemen Pesanan Distribusi</h1>
+          <p className="text-sm text-muted mt-1">
             Daftar pesanan produk plastik pelanggan beserta muatan beban (kg) untuk penentuan rute.
           </p>
         </div>
 
         <button
           onClick={openAddModal}
-          className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl shadow-sm hover:shadow transition"
+          className="h-11 px-4 inline-flex items-center gap-2 bg-petrol-900 hover:bg-petrol-800 text-white text-[15px] font-semibold rounded-md transition-colors focus:outline-none focus-visible:ring-[3px] focus-visible:ring-offset-2 focus-visible:ring-teal-600/50 cursor-pointer"
         >
           <Plus className="w-4 h-4" />
-          <span>Buat Pesanan Baru</span>
+          <span>Buat pesanan baru</span>
         </button>
       </div>
 
       {/* Notifications */}
       {successMsg && (
-        <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center gap-3 text-sm text-emerald-800">
-          <CheckCircle2 className="w-5 h-5 flex-shrink-0 text-emerald-600" />
+        <div
+          role="alert"
+          className="border-l-2 border-teal-600 bg-[#EDFAF7] px-3.5 py-2.5 text-sm text-[#0F4E4A] flex items-center gap-2.5"
+        >
+          <CheckCircle2 className="w-4 h-4 shrink-0 text-teal-600" />
           <span>{successMsg}</span>
         </div>
       )}
 
       {errorMsg && (
-        <div className="p-4 bg-red-50 border border-red-200 rounded-xl flex items-center gap-3 text-sm text-red-800">
-          <AlertCircle className="w-5 h-5 flex-shrink-0 text-red-600" />
+        <div
+          role="alert"
+          className="border-l-2 border-danger bg-danger-bg px-3.5 py-2.5 text-sm text-danger-text flex items-center gap-2.5"
+        >
+          <AlertCircle className="w-4 h-4 shrink-0 text-danger" />
           <span>{errorMsg}</span>
         </div>
       )}
 
       {/* Filter Bar */}
-      <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs flex flex-col md:flex-row justify-between items-center gap-4">
+      <div className="bg-white p-4 rounded-md border border-border flex flex-col md:flex-row justify-between items-center gap-4">
         <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
           {/* Search Toko */}
           <div className="relative w-full sm:w-64">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <Search className="w-4 h-4 text-subtle absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Cari toko pelanggan..."
-              className="w-full pl-9 pr-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white transition"
+              className="w-full h-11 pl-9 pr-3.5 bg-white border border-border rounded-md text-[15px] text-ink placeholder:text-subtle focus:outline-none focus:border-teal-600 focus:ring-[3px] focus:ring-teal-600/20 transition-colors"
             />
           </div>
 
           {/* Filter Status */}
-          <div className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5">
-            <Filter className="w-3.5 h-3.5 text-slate-400" />
+          <div className="flex items-center gap-1.5 bg-white border border-border rounded-md px-3 h-11">
+            <Filter className="w-3.5 h-3.5 text-subtle" />
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="bg-transparent text-xs font-medium text-slate-700 focus:outline-none"
+              className="bg-transparent text-xs font-medium text-ink focus:outline-none cursor-pointer"
             >
-              <option value="all">Semua Status</option>
+              <option value="all">Semua status</option>
               <option value="baru">Baru</option>
-              <option value="belum_siap">Belum Siap</option>
-              <option value="siap">Siap Kirim</option>
-              <option value="dalam_pengiriman">Dalam Pengiriman</option>
+              <option value="belum_siap">Belum siap</option>
+              <option value="siap">Siap kirim</option>
+              <option value="dalam_pengiriman">Dalam pengiriman</option>
               <option value="diterima">Diterima</option>
-              <option value="tidak_lengkap">Tidak Lengkap</option>
+              <option value="tidak_lengkap">Tidak lengkap</option>
             </select>
           </div>
 
           {/* Filter Tanggal */}
-          <div className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5">
-            <Calendar className="w-3.5 h-3.5 text-slate-400" />
+          <div className="flex items-center gap-1.5 bg-white border border-border rounded-md px-3 h-11">
+            <Calendar className="w-3.5 h-3.5 text-subtle" />
             <input
               type="date"
               value={dateFilter}
               onChange={(e) => setDateFilter(e.target.value)}
-              className="bg-transparent text-xs font-medium text-slate-700 focus:outline-none"
+              className="bg-transparent text-xs font-medium text-ink focus:outline-none"
             />
             {dateFilter && (
               <button
                 onClick={() => setDateFilter('')}
                 title="Hapus filter tanggal"
-                className="text-slate-400 hover:text-slate-600 ml-1 text-xs"
+                className="text-subtle hover:text-ink ml-1 text-xs"
               >
                 &times;
               </button>
@@ -333,54 +339,54 @@ export const OrdersPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="text-xs text-slate-500 font-medium whitespace-nowrap">
-          Ditemukan: <span className="font-bold text-slate-800">{filteredOrders.length}</span> pesanan
+        <div className="text-sm text-muted whitespace-nowrap">
+          Ditemukan: <span className="font-semibold text-ink">{filteredOrders.length}</span> pesanan
         </div>
       </div>
 
       {/* Orders Table */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
+      <div className="bg-white rounded-md border border-border overflow-hidden">
         {loading ? (
-          <div className="p-12 text-center text-slate-500 flex flex-col items-center gap-3">
-            <div className="w-8 h-8 border-3 border-blue-600 border-t-transparent rounded-full animate-spin" />
+          <div className="p-12 text-center text-muted flex flex-col items-center gap-3">
+            <span className="w-5 h-5 rounded-full border-2 border-border-strong border-t-petrol-900 animate-spin motion-reduce:animate-none" />
             <p className="text-sm">Memuat pesanan...</p>
           </div>
         ) : filteredOrders.length === 0 ? (
-          <div className="p-12 text-center text-slate-500">
-            <ShoppingCart className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-            <p className="font-semibold text-slate-700">Tidak ada pesanan yang sesuai filter</p>
-            <p className="text-xs text-slate-400 mt-1">
+          <div className="p-12 text-center text-muted">
+            <ShoppingCart className="w-10 h-10 text-subtle mx-auto mb-3" />
+            <p className="font-semibold text-ink">Tidak ada pesanan yang sesuai filter</p>
+            <p className="text-xs text-muted mt-1">
               Buat pesanan baru untuk mulai mengalokasikan stok produk dan rute armada.
             </p>
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm text-slate-600">
-              <thead className="bg-slate-50 text-slate-700 text-xs font-semibold uppercase tracking-wider border-b border-slate-200">
+            <table className="w-full text-left text-sm text-ink">
+              <thead className="bg-surface-subtle text-muted text-xs font-medium border-b border-border">
                 <tr>
-                  <th className="py-3.5 px-4">Tanggal</th>
-                  <th className="py-3.5 px-4">Toko Pelanggan</th>
-                  <th className="py-3.5 px-4 text-center">Status</th>
-                  <th className="py-3.5 px-4">Item & Muatan (kg)</th>
-                  <th className="py-3.5 px-4">Catatan</th>
-                  <th className="py-3.5 px-4 text-right">Aksi</th>
+                  <th className="py-3 px-4">Tanggal</th>
+                  <th className="py-3 px-4">Toko pelanggan</th>
+                  <th className="py-3 px-4 text-center">Status</th>
+                  <th className="py-3 px-4">Item & muatan (kg)</th>
+                  <th className="py-3 px-4">Catatan</th>
+                  <th className="py-3 px-4 text-right">Aksi</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-border">
                 {filteredOrders.map((o) => {
                   const isLocked = ['dalam_pengiriman', 'diterima', 'tidak_lengkap'].includes(o.status);
                   const itemCount = (o.order_items || []).length;
 
                   return (
-                    <tr key={o.id} className="hover:bg-slate-50/80 transition">
-                      <td className="py-3.5 px-4 font-mono text-xs text-slate-700 whitespace-nowrap">
+                    <tr key={o.id} className="hover:bg-surface-subtle transition-colors">
+                      <td className="py-3.5 px-4 font-mono text-xs text-muted whitespace-nowrap">
                         {o.tanggal}
                       </td>
                       <td className="py-3.5 px-4">
-                        <div className="font-semibold text-slate-900">
+                        <div className="font-semibold text-ink">
                           {o.customers?.nama_toko || 'Toko Pelanggan'}
                         </div>
-                        <div className="text-[11px] text-slate-500 truncate max-w-xs">
+                        <div className="text-xs text-muted truncate max-w-xs mt-0.5">
                           {o.customers?.alamat}
                         </div>
                       </td>
@@ -389,32 +395,32 @@ export const OrdersPage: React.FC = () => {
                       </td>
                       <td className="py-3.5 px-4">
                         <div className="flex items-center gap-2">
-                          <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 bg-slate-100 text-slate-700 rounded-md">
-                            <Package className="w-3 h-3 text-slate-500" />
+                          <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 bg-surface-muted text-ink rounded-md border border-border">
+                            <Package className="w-3 h-3 text-muted" />
                             {itemCount} item
                           </span>
-                          <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 bg-blue-50 text-blue-700 rounded-md">
-                            <Weight className="w-3 h-3 text-blue-600" />
+                          <span className="inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 bg-teal-50 text-[#0F4E4A] rounded-md border border-teal-200">
+                            <Weight className="w-3 h-3 text-teal-600" />
                             {Number(o.total_muatan_kg).toFixed(1)} kg
                           </span>
                         </div>
                       </td>
-                      <td className="py-3.5 px-4 text-xs text-slate-500 max-w-xs truncate">
+                      <td className="py-3.5 px-4 text-xs text-muted max-w-xs truncate">
                         {o.catatan || '-'}
                       </td>
                       <td className="py-3.5 px-4 text-right">
                         <div className="inline-flex items-center gap-1">
                           <button
                             onClick={() => openDetailModal(o)}
-                            title="Lihat Detail Pesanan"
-                            className="p-1.5 text-slate-600 hover:bg-slate-100 rounded-lg transition"
+                            title="Lihat detail pesanan"
+                            className="p-1.5 text-muted hover:text-ink hover:bg-surface-muted rounded-md transition-colors"
                           >
                             <Eye className="w-4 h-4" />
                           </button>
                           {isLocked ? (
                             <span
                               title="Terkunci: Pesanan sedang dikirim atau selesai"
-                              className="p-1.5 text-slate-300 cursor-not-allowed"
+                              className="p-1.5 text-subtle cursor-not-allowed"
                             >
                               <Lock className="w-4 h-4" />
                             </span>
@@ -422,15 +428,15 @@ export const OrdersPage: React.FC = () => {
                             <>
                               <button
                                 onClick={() => openEditModal(o)}
-                                title="Edit Pesanan"
-                                className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition"
+                                title="Edit pesanan"
+                                className="p-1.5 text-muted hover:text-ink hover:bg-surface-muted rounded-md transition-colors"
                               >
                                 <Edit2 className="w-4 h-4" />
                               </button>
                               <button
                                 onClick={() => handleDeleteOrder(o)}
-                                title="Hapus Pesanan"
-                                className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition"
+                                title="Hapus pesanan"
+                                className="p-1.5 text-danger-text hover:bg-danger-bg rounded-md transition-colors"
                               >
                                 <Trash2 className="w-4 h-4" />
                               </button>
@@ -449,15 +455,15 @@ export const OrdersPage: React.FC = () => {
 
       {/* Modal 1: Form Tambah / Edit Pesanan */}
       {isFormModalOpen && (
-        <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-xl border border-slate-200 max-w-2xl w-full overflow-hidden animate-scaleIn">
-            <div className="flex justify-between items-center px-6 py-4 border-b border-slate-200">
-              <h2 className="text-base font-bold text-slate-900">
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-petrol-900/40 flex items-center justify-center p-4">
+          <div className="bg-white rounded-md border border-border max-w-2xl w-full overflow-hidden shadow-sm">
+            <div className="flex justify-between items-center px-6 py-4 border-b border-border">
+              <h2 className="font-display text-lg font-bold tracking-tight text-ink">
                 {isEditing ? 'Ubah Pesanan' : 'Buat Pesanan Distribusi Baru'}
               </h2>
               <button
                 onClick={() => setIsFormModalOpen(false)}
-                className="p-1.5 text-slate-400 hover:text-slate-700 rounded-lg transition"
+                className="p-1 text-muted hover:text-ink rounded-md transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -465,18 +471,24 @@ export const OrdersPage: React.FC = () => {
 
             <form onSubmit={handleSubmitOrder} className="p-6 space-y-4">
               {formError && (
-                <div className="p-3.5 bg-red-50 border border-red-200 rounded-xl text-xs text-red-700 flex items-center gap-2">
-                  <AlertCircle className="w-4 h-4 flex-shrink-0 text-red-600" />
+                <div
+                  role="alert"
+                  className="border-l-2 border-danger bg-danger-bg px-3.5 py-2.5 text-xs text-danger-text flex items-center gap-2"
+                >
+                  <AlertCircle className="w-4 h-4 shrink-0 text-danger" />
                   <span>{formError}</span>
                 </div>
               )}
 
               {/* Warning jika kapasitas melebihi armada terbesar */}
               {calculatedClientPayload > maxVehicleCapacity && (
-                <div className="p-3.5 bg-amber-50 border border-amber-300 rounded-xl text-xs text-amber-800 flex items-start gap-2.5">
-                  <AlertTriangle className="w-4 h-4 flex-shrink-0 text-amber-600 mt-0.5" />
+                <div
+                  role="alert"
+                  className="border-l-2 border-amber-400 bg-amber-50 px-3.5 py-2.5 text-xs text-[#7A4B06] flex items-start gap-2.5"
+                >
+                  <AlertTriangle className="w-4 h-4 shrink-0 text-amber-500 mt-0.5" />
                   <div>
-                    <span className="font-bold">Peringatan Kapasitas Armada:</span> Total muatan pesanan ini ({calculatedClientPayload.toFixed(1)} kg) melebihi kapasitas kendaraan terbesar yang tersedia ({maxVehicleCapacity} kg).
+                    <span className="font-semibold">Peringatan kapasitas armada:</span> Total muatan pesanan ini ({calculatedClientPayload.toFixed(1)} kg) melebihi kapasitas kendaraan terbesar yang tersedia ({maxVehicleCapacity} kg).
                   </div>
                 </div>
               )}
@@ -484,13 +496,13 @@ export const OrdersPage: React.FC = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {/* Pelanggan */}
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
-                    Toko Pelanggan *
+                  <label className="block text-sm font-medium text-ink mb-1.5">
+                    Toko pelanggan *
                   </label>
                   <select
                     value={formCustomerId}
                     onChange={(e) => setFormCustomerId(e.target.value)}
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white transition"
+                    className="w-full h-11 px-3.5 bg-white border border-border rounded-md text-[15px] text-ink focus:outline-none focus:border-teal-600 focus:ring-[3px] focus:ring-teal-600/20 transition-colors"
                     required
                   >
                     {customers.map((c) => (
@@ -503,14 +515,14 @@ export const OrdersPage: React.FC = () => {
 
                 {/* Tanggal */}
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
-                    Tanggal Pengiriman *
+                  <label className="block text-sm font-medium text-ink mb-1.5">
+                    Tanggal pengiriman *
                   </label>
                   <input
                     type="date"
                     value={formTanggal}
                     onChange={(e) => setFormTanggal(e.target.value)}
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white transition"
+                    className="w-full h-11 px-3.5 bg-white border border-border rounded-md text-[15px] text-ink focus:outline-none focus:border-teal-600 focus:ring-[3px] focus:ring-teal-600/20 transition-colors"
                     required
                   />
                 </div>
@@ -518,31 +530,31 @@ export const OrdersPage: React.FC = () => {
 
               {/* Catatan */}
               <div>
-                <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
-                  Catatan Pengiriman (Opsional)
+                <label className="block text-sm font-medium text-ink mb-1.5">
+                  Catatan pengiriman (opsional)
                 </label>
                 <input
                   type="text"
                   value={formCatatan}
                   onChange={(e) => setFormCatatan(e.target.value)}
                   placeholder="Contoh: Titipkan di kasir utama..."
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white transition"
+                  className="w-full h-11 px-3.5 bg-white border border-border rounded-md text-[15px] text-ink placeholder:text-subtle focus:outline-none focus:border-teal-600 focus:ring-[3px] focus:ring-teal-600/20 transition-colors"
                 />
               </div>
 
               {/* Dynamic Items List */}
               <div className="space-y-3 pt-2">
                 <div className="flex justify-between items-center">
-                  <label className="text-xs font-semibold text-slate-700 uppercase tracking-wider">
-                    Daftar Item Produk Plastik
+                  <label className="text-sm font-medium text-ink">
+                    Daftar item produk plastik
                   </label>
                   <button
                     type="button"
                     onClick={handleAddItemRow}
-                    className="flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-700 transition"
+                    className="inline-flex items-center gap-1 text-xs font-semibold text-teal-600 hover:text-petrol-800 transition-colors cursor-pointer"
                   >
                     <Plus className="w-3.5 h-3.5" />
-                    <span>Tambah Baris Produk</span>
+                    <span>Tambah baris produk</span>
                   </button>
                 </div>
 
@@ -553,14 +565,14 @@ export const OrdersPage: React.FC = () => {
                     const itemWeight = prod ? (prod.berat_per_unit_kg * item.qty).toFixed(1) : '0';
 
                     return (
-                      <div key={index} className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+                      <div key={index} className="p-3 bg-surface-subtle rounded-md border border-border space-y-2">
                         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
                           {/* Pilih Produk */}
                           <div className="flex-1 w-full sm:w-auto">
                             <select
                               value={item.product_id}
                               onChange={(e) => handleItemChange(index, 'product_id', e.target.value)}
-                              className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs font-medium text-slate-800 focus:ring-2 focus:ring-blue-600"
+                              className="w-full h-9 px-2.5 bg-white border border-border rounded-md text-xs font-medium text-ink focus:outline-none focus:border-teal-600"
                             >
                               {products.map((p) => (
                                 <option key={p.id} value={p.id}>
@@ -573,20 +585,20 @@ export const OrdersPage: React.FC = () => {
                           {/* Qty Input */}
                           <div className="flex items-center gap-2 w-full sm:w-auto justify-between">
                             <div className="flex items-center gap-1.5">
-                              <span className="text-xs text-slate-500">Qty:</span>
+                              <span className="text-xs text-muted">Qty:</span>
                               <input
                                 type="number"
                                 min="1"
                                 step="1"
                                 value={item.qty}
                                 onChange={(e) => handleItemChange(index, 'qty', parseInt(e.target.value) || 0)}
-                                className="w-20 px-2 py-1 bg-white border border-slate-300 rounded-lg text-xs font-semibold text-center"
+                                className="w-20 h-9 px-2 bg-white border border-border rounded-md text-xs font-semibold text-center text-ink focus:outline-none focus:border-teal-600"
                                 required
                               />
                             </div>
 
                             {/* Subtotal Berat */}
-                            <span className="text-xs font-mono font-medium text-slate-600 whitespace-nowrap">
+                            <span className="text-xs font-mono font-medium text-muted whitespace-nowrap">
                               = {itemWeight} kg
                             </span>
 
@@ -594,7 +606,7 @@ export const OrdersPage: React.FC = () => {
                             <button
                               type="button"
                               onClick={() => handleRemoveItemRow(index)}
-                              className="p-1 text-slate-400 hover:text-red-600 transition"
+                              className="p-1 text-subtle hover:text-danger transition-colors cursor-pointer"
                               title="Hapus item"
                             >
                               <Trash2 className="w-4 h-4" />
@@ -604,8 +616,8 @@ export const OrdersPage: React.FC = () => {
 
                         {/* Peringatan Stok Menipis/Kurang */}
                         {isOverStock && (
-                          <div className="text-[11px] text-amber-700 bg-amber-100/70 px-2 py-1 rounded-md flex items-center gap-1">
-                            <AlertTriangle className="w-3 h-3 text-amber-600 flex-shrink-0" />
+                          <div className="text-xs text-[#874D00] bg-[#FEF6E7] border border-[#FADBA2] px-2 py-1 rounded-md flex items-center gap-1">
+                            <AlertTriangle className="w-3 h-3 text-amber-500 shrink-0" />
                             <span>Kuantitas ({item.qty}) melebihi stok yang tersedia saat ini ({prod?.stok} unit).</span>
                           </div>
                         )}
@@ -616,28 +628,28 @@ export const OrdersPage: React.FC = () => {
               </div>
 
               {/* Total Muatan Summary Box */}
-              <div className="p-3.5 bg-blue-50/70 border border-blue-200 rounded-xl flex items-center justify-between text-xs">
-                <span className="font-semibold text-blue-900">Total Muatan Dihitung:</span>
-                <span className="font-bold text-sm text-blue-700 font-mono">
+              <div className="p-3.5 bg-teal-50 border border-teal-200 rounded-md flex items-center justify-between text-xs">
+                <span className="font-semibold text-[#0F4E4A]">Total muatan dihitung:</span>
+                <span className="font-bold text-sm text-[#0F4E4A] font-mono">
                   {calculatedClientPayload.toFixed(2)} kg
                 </span>
               </div>
 
               {/* Actions */}
-              <div className="pt-4 border-t border-slate-200 flex justify-end gap-2.5">
+              <div className="pt-4 border-t border-border flex justify-end gap-2.5">
                 <button
                   type="button"
                   onClick={() => setIsFormModalOpen(false)}
-                  className="px-4 py-2 border border-slate-300 text-slate-700 hover:bg-slate-50 font-medium rounded-xl text-sm transition"
+                  className="h-11 px-4 border border-border bg-white text-ink hover:bg-surface-muted font-medium rounded-md text-sm transition-colors cursor-pointer"
                 >
                   Batal
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl shadow-sm text-sm transition disabled:opacity-50"
+                  className="h-11 px-5 bg-petrol-900 hover:bg-petrol-800 text-white font-semibold rounded-md text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 disabled:opacity-60 cursor-pointer"
                 >
-                  {isSubmitting ? 'Memproses di Server...' : isEditing ? 'Simpan Perubahan' : 'Buat Pesanan'}
+                  {isSubmitting ? 'Memproses...' : isEditing ? 'Simpan perubahan' : 'Buat pesanan'}
                 </button>
               </div>
             </form>
@@ -647,18 +659,18 @@ export const OrdersPage: React.FC = () => {
 
       {/* Modal 2: Detail Pesanan */}
       {isDetailModalOpen && selectedOrder && (
-        <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-xl border border-slate-200 max-w-lg w-full overflow-hidden animate-scaleIn">
-            <div className="flex justify-between items-center px-6 py-4 border-b border-slate-200">
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-petrol-900/40 flex items-center justify-center p-4">
+          <div className="bg-white rounded-md border border-border max-w-lg w-full overflow-hidden shadow-sm">
+            <div className="flex justify-between items-center px-6 py-4 border-b border-border">
               <div>
-                <h2 className="text-base font-bold text-slate-900">
+                <h2 className="font-display text-lg font-bold tracking-tight text-ink">
                   Detail Pesanan #{selectedOrder.id.slice(0, 8)}
                 </h2>
-                <p className="text-xs text-slate-500">Tanggal: {selectedOrder.tanggal}</p>
+                <p className="text-xs text-muted mt-0.5">Tanggal: {selectedOrder.tanggal}</p>
               </div>
               <button
                 onClick={() => setIsDetailModalOpen(false)}
-                className="p-1.5 text-slate-400 hover:text-slate-700 rounded-lg transition"
+                className="p-1 text-muted hover:text-ink rounded-md transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -666,44 +678,44 @@ export const OrdersPage: React.FC = () => {
 
             <div className="p-6 space-y-4">
               {/* Info Pelanggan */}
-              <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
-                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Pelanggan</p>
-                <p className="font-bold text-slate-900 text-sm mt-0.5">{selectedOrder.customers?.nama_toko}</p>
-                <p className="text-xs text-slate-600 mt-0.5">{selectedOrder.customers?.alamat}</p>
-                <p className="text-xs text-slate-500 mt-0.5">Kontak: {selectedOrder.customers?.no_hp}</p>
+              <div className="p-3.5 bg-surface-subtle rounded-md border border-border">
+                <p className="text-xs font-semibold text-muted">Pelanggan</p>
+                <p className="font-bold text-ink text-sm mt-0.5">{selectedOrder.customers?.nama_toko}</p>
+                <p className="text-xs text-muted mt-0.5">{selectedOrder.customers?.alamat}</p>
+                <p className="text-xs text-muted mt-0.5">Kontak: {selectedOrder.customers?.no_hp}</p>
               </div>
 
               {/* Status & Catatan */}
               <div className="flex items-center justify-between text-xs">
-                <span className="font-medium text-slate-600">Status Saat Ini:</span>
+                <span className="font-medium text-muted">Status saat ini:</span>
                 {getStatusBadge(selectedOrder.status)}
               </div>
               {selectedOrder.catatan && (
-                <div className="text-xs text-slate-600 p-2.5 bg-slate-100 rounded-lg">
-                  <span className="font-semibold text-slate-700">Catatan:</span> {selectedOrder.catatan}
+                <div className="text-xs text-muted p-2.5 bg-surface-muted rounded-md border border-border">
+                  <span className="font-semibold text-ink">Catatan:</span> {selectedOrder.catatan}
                 </div>
               )}
 
               {/* Daftar Barang */}
               <div>
-                <p className="text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">Item Produk Pesanan</p>
-                <div className="border border-slate-200 rounded-xl overflow-hidden divide-y divide-slate-100 text-xs">
+                <p className="text-xs font-semibold text-muted mb-2">Item produk pesanan</p>
+                <div className="border border-border rounded-md overflow-hidden divide-y divide-border text-xs">
                   {(selectedOrder.order_items || []).map((it) => (
                     <div key={it.id} className="p-3 flex justify-between items-center">
                       <div>
-                        <p className="font-semibold text-slate-800">{it.products?.nama || 'Produk'}</p>
-                        <p className="text-slate-500 text-[11px]">{it.qty} unit &times; {it.products?.berat_per_unit_kg} kg</p>
+                        <p className="font-semibold text-ink">{it.products?.nama || 'Produk'}</p>
+                        <p className="text-muted text-xs mt-0.5">{it.qty} unit &times; {it.products?.berat_per_unit_kg} kg</p>
                       </div>
-                      <span className="font-mono font-bold text-slate-800">{Number(it.berat_kg).toFixed(1)} kg</span>
+                      <span className="font-mono font-semibold text-ink">{Number(it.berat_kg).toFixed(1)} kg</span>
                     </div>
                   ))}
                 </div>
               </div>
 
               {/* Total Muatan */}
-              <div className="p-3.5 bg-blue-50 border border-blue-200 rounded-xl flex items-center justify-between">
-                <span className="text-xs font-bold text-blue-900">Total Muatan Terverifikasi:</span>
-                <span className="text-base font-extrabold text-blue-700 font-mono">
+              <div className="p-3.5 bg-teal-50 border border-teal-200 rounded-md flex items-center justify-between">
+                <span className="text-xs font-semibold text-[#0F4E4A]">Total muatan terverifikasi:</span>
+                <span className="text-base font-bold text-[#0F4E4A] font-mono">
                   {Number(selectedOrder.total_muatan_kg).toFixed(2)} kg
                 </span>
               </div>
@@ -718,19 +730,19 @@ export const OrdersPage: React.FC = () => {
                       namaToko: selectedOrder.customers?.nama_toko || 'Toko Pelanggan',
                     });
                   }}
-                  className="w-full py-2.5 px-4 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition"
+                  className="w-full h-11 px-4 bg-white text-ink border border-border hover:bg-surface-muted rounded-md text-xs font-medium flex items-center justify-center gap-2 transition-colors cursor-pointer"
                 >
-                  <Eye className="w-4 h-4 text-emerald-600" />
-                  <span>Lihat Bukti Foto & Tanda Tangan Penerima</span>
+                  <Eye className="w-4 h-4 text-teal-600" />
+                  <span>Lihat bukti foto & tanda tangan penerima</span>
                 </button>
               )}
             </div>
 
-            <div className="px-6 py-3.5 bg-slate-50 border-t border-slate-200 flex justify-end">
+            <div className="px-6 py-3.5 bg-surface-subtle border-t border-border flex justify-end">
               <button
                 type="button"
                 onClick={() => setIsDetailModalOpen(false)}
-                className="px-4 py-2 bg-white border border-slate-300 text-slate-700 font-medium rounded-xl text-xs hover:bg-slate-100 transition"
+                className="h-9 px-4 bg-white border border-border text-ink font-medium rounded-md text-xs hover:bg-surface-muted transition-colors cursor-pointer"
               >
                 Tutup
               </button>

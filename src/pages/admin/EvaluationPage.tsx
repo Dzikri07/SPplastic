@@ -305,11 +305,11 @@ export const EvaluationPage: React.FC = () => {
             <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-800">
               Bab 4 &bull; Analisis & Evaluasi
             </span>
-            <h1 className="text-2xl font-bold text-slate-900">
+            <h1 className="text-2xl font-bold text-ink">
               Evaluasi Rute Konvensional vs Saving Matrix
             </h1>
           </div>
-          <p className="text-sm text-slate-500 mt-1">
+          <p className="text-sm text-muted mt-1">
             Perbandingan efisiensi jarak tempuh dan biaya bahan bakar armada antara kebiasaan sopir lama vs metode Saving Matrix.
           </p>
         </div>
@@ -318,7 +318,7 @@ export const EvaluationPage: React.FC = () => {
           <button
             onClick={handleExportPdf}
             disabled={!evaluationResult}
-            className="flex items-center gap-2 px-3.5 py-2 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 rounded-xl text-xs font-bold shadow-xs transition disabled:opacity-50"
+            className="flex items-center gap-2 px-3.5 py-2 bg-white border border-line hover:bg-surface-subtle text-ink rounded-md text-xs font-bold shadow-xs transition disabled:opacity-50"
           >
             <Download className="w-4 h-4 text-blue-600" />
             <span>Ekspor PDF Evaluasi (Bab 4)</span>
@@ -327,7 +327,7 @@ export const EvaluationPage: React.FC = () => {
           <button
             onClick={handleSaveSnapshot}
             disabled={isSaving || !evaluationResult}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow-sm transition disabled:opacity-50"
+            className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-xs font-bold shadow-sm transition disabled:opacity-50"
           >
             <Save className="w-4 h-4" />
             <span>{isSaving ? 'Menyimpan...' : 'Simpan Riwayat Evaluasi'}</span>
@@ -337,21 +337,21 @@ export const EvaluationPage: React.FC = () => {
 
       {/* Notifications */}
       {successMsg && (
-        <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center gap-3 text-xs text-emerald-800">
+        <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-md flex items-center gap-3 text-xs text-emerald-800">
           <CheckCircle2 className="w-5 h-5 flex-shrink-0 text-emerald-600" />
           <span>{successMsg}</span>
         </div>
       )}
 
       {errorMsg && (
-        <div className="p-4 bg-red-50 border border-red-200 rounded-2xl flex items-center gap-3 text-xs text-red-800">
+        <div className="p-4 bg-red-50 border border-red-200 rounded-md flex items-center gap-3 text-xs text-red-800">
           <AlertCircle className="w-5 h-5 flex-shrink-0 text-red-600" />
           <span>{errorMsg}</span>
         </div>
       )}
 
       {/* Catatan Metodologi Apple-to-Apple */}
-      <div className="p-4 bg-amber-50/70 border border-amber-200 rounded-2xl flex items-start gap-3 text-xs text-amber-900">
+      <div className="p-4 bg-amber-50/70 border border-amber-200 rounded-md flex items-start gap-3 text-xs text-amber-900">
         <Info className="w-5 h-5 flex-shrink-0 text-amber-600 mt-0.5" />
         <div className="space-y-1">
           <span className="font-bold block">
@@ -368,18 +368,18 @@ export const EvaluationPage: React.FC = () => {
       </div>
 
       {/* Panel 1: Pemilihan Rute Hasil Saving Matrix */}
-      <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-3">
+      <div className="bg-white p-5 rounded-md border border-line shadow-xs space-y-3">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
           <div className="flex items-center gap-2">
             <Truck className="w-5 h-5 text-blue-600" />
-            <h2 className="text-sm font-bold text-slate-900">Pilih Rute Armada untuk Dievaluasi:</h2>
+            <h2 className="text-sm font-bold text-ink">Pilih Rute Armada untuk Dievaluasi:</h2>
           </div>
 
           <div className="flex items-center gap-3 w-full sm:w-auto">
             <select
               value={selectedRouteId}
               onChange={(e) => setSelectedRouteId(e.target.value)}
-              className="w-full sm:w-80 px-3.5 py-2 text-xs font-semibold rounded-xl border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+              className="w-full sm:w-80 px-3.5 py-2 text-xs font-semibold rounded-md border border-line bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
             >
               {routes.map((r) => (
                 <option key={r.id} value={r.id}>
@@ -393,7 +393,7 @@ export const EvaluationPage: React.FC = () => {
               onClick={loadData}
               disabled={loading}
               title="Muat Ulang"
-              className="p-2 border border-slate-300 rounded-xl hover:bg-slate-50 text-slate-600 transition"
+              className="p-2 border border-line rounded-md hover:bg-surface-subtle text-muted transition"
             >
               <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
             </button>
@@ -405,37 +405,37 @@ export const EvaluationPage: React.FC = () => {
       {evaluationResult && currentRoute && (
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           {/* Card 1: Jarak Konvensional */}
-          <div className="bg-white p-5 rounded-2xl border border-rose-200 shadow-xs space-y-1">
+          <div className="bg-white p-5 rounded-md border border-rose-200 shadow-xs space-y-1">
             <div className="flex justify-between items-center text-xs text-rose-700 font-semibold">
               <span>Rute Konvensional</span>
               <span className="w-2.5 h-2.5 rounded-full bg-rose-500"></span>
             </div>
-            <h3 className="text-2xl font-extrabold text-slate-900">
+            <h3 className="text-2xl font-extrabold text-ink">
               {evaluationResult.jarakKonvensionalKm.toFixed(2)}{' '}
-              <span className="text-sm font-semibold text-slate-500">km</span>
+              <span className="text-sm font-semibold text-muted">km</span>
             </h3>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-muted">
               Biaya BBM: {formatRupiah(evaluationResult.biayaBbmKonvensionalRp)}
             </p>
           </div>
 
           {/* Card 2: Jarak Saving Matrix */}
-          <div className="bg-white p-5 rounded-2xl border border-blue-200 shadow-xs space-y-1">
+          <div className="bg-white p-5 rounded-md border border-blue-200 shadow-xs space-y-1">
             <div className="flex justify-between items-center text-xs text-blue-700 font-semibold">
               <span>Rute Saving Matrix</span>
               <span className="w-2.5 h-2.5 rounded-full bg-blue-600"></span>
             </div>
             <h3 className="text-2xl font-extrabold text-blue-700">
               {evaluationResult.jarakOptimalKm.toFixed(2)}{' '}
-              <span className="text-sm font-semibold text-slate-500">km</span>
+              <span className="text-sm font-semibold text-muted">km</span>
             </h3>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-muted">
               Biaya BBM: {formatRupiah(evaluationResult.biayaBbmOptimalRp)}
             </p>
           </div>
 
           {/* Card 3: Selisih Jarak Hemat */}
-          <div className="bg-white p-5 rounded-2xl border border-emerald-200 shadow-xs space-y-1">
+          <div className="bg-white p-5 rounded-md border border-emerald-200 shadow-xs space-y-1">
             <div className="flex justify-between items-center text-xs text-emerald-700 font-semibold">
               <span>Penghematan Jarak</span>
               <span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
@@ -443,16 +443,16 @@ export const EvaluationPage: React.FC = () => {
             <h3 className="text-2xl font-extrabold text-emerald-700">
               {evaluationResult.selisihJarakKm >= 0 ? '+' : ''}
               {evaluationResult.selisihJarakKm.toFixed(2)}{' '}
-              <span className="text-sm font-semibold text-slate-500">km</span>
+              <span className="text-sm font-semibold text-muted">km</span>
             </h3>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-muted">
               Hemat BBM: {formatRupiah(evaluationResult.selisihBiayaBbmRp)}
             </p>
           </div>
 
           {/* Card 4: Persentase Efisiensi */}
-          <div className="bg-gradient-to-br from-blue-700 to-indigo-800 p-5 rounded-2xl shadow-md text-white space-y-1">
-            <span className="text-xs font-bold text-blue-200 block uppercase tracking-wider">
+          <div className="bg-ink p-5 rounded-md shadow-md text-white space-y-1">
+            <span className="text-xs font-bold text-blue-200 block  ">
               Persentase Efisiensi (%)
             </span>
             <h3 className="text-2xl font-black">
@@ -471,11 +471,11 @@ export const EvaluationPage: React.FC = () => {
       {/* Grid: Form Atur Urutan Konvensional & Peta Komparasi */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Kolom Kiri: Form Urutan Toko Konvensional (4 Kolom) */}
-        <div className="lg:col-span-5 bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-4">
-          <div className="flex justify-between items-center pb-3 border-b border-slate-100">
+        <div className="lg:col-span-5 bg-white p-5 rounded-md border border-line shadow-xs space-y-4">
+          <div className="flex justify-between items-center pb-3 border-b border-line">
             <div>
-              <h3 className="text-sm font-bold text-slate-900">Urutan Rute Konvensional</h3>
-              <p className="text-[11px] text-slate-500">
+              <h3 className="text-sm font-bold text-ink">Urutan Rute Konvensional</h3>
+              <p className="text-[11px] text-muted">
                 Atur urutan kebiasaan driver lama dengan tombol panah:
               </p>
             </div>
@@ -488,7 +488,7 @@ export const EvaluationPage: React.FC = () => {
           </div>
 
           {/* Depot Awal */}
-          <div className="p-3 bg-red-50 border border-red-200 rounded-xl flex items-center gap-2.5 text-xs">
+          <div className="p-3 bg-red-50 border border-red-200 rounded-md flex items-center gap-2.5 text-xs">
             <div className="w-6 h-6 rounded-lg bg-red-600 text-white font-bold flex items-center justify-center flex-shrink-0 text-[10px]">
               D
             </div>
@@ -505,17 +505,17 @@ export const EvaluationPage: React.FC = () => {
             {conventionalStops.map((stop, idx) => (
               <div
                 key={stop.customerId}
-                className="p-3 bg-slate-50 hover:bg-slate-100/70 border border-slate-200 rounded-xl flex items-center justify-between gap-2 text-xs transition"
+                className="p-3 bg-surface-subtle hover:bg-surface-muted/70 border border-line rounded-md flex items-center justify-between gap-2 text-xs transition"
               >
                 <div className="flex items-center gap-2.5 min-w-0">
                   <div className="w-6 h-6 rounded-lg bg-rose-600 text-white font-bold flex items-center justify-center flex-shrink-0 text-[11px]">
                     {idx + 1}
                   </div>
                   <div className="min-w-0">
-                    <span className="font-bold text-slate-900 block truncate">
+                    <span className="font-bold text-ink block truncate">
                       {stop.namaToko}
                     </span>
-                    <span className="text-[10px] text-slate-500 block truncate">
+                    <span className="text-[10px] text-muted block truncate">
                       {stop.alamat}
                     </span>
                   </div>
@@ -525,7 +525,7 @@ export const EvaluationPage: React.FC = () => {
                   <button
                     disabled={idx === 0}
                     onClick={() => handleMoveStop(idx, 'up')}
-                    className="p-1 rounded-lg border border-slate-200 bg-white hover:bg-slate-100 disabled:opacity-30 text-slate-600"
+                    className="p-1 rounded-lg border border-line bg-white hover:bg-surface-muted disabled:opacity-30 text-muted"
                     title="Pindahkan Lebih Awal"
                   >
                     <ArrowUp className="w-3.5 h-3.5" />
@@ -533,7 +533,7 @@ export const EvaluationPage: React.FC = () => {
                   <button
                     disabled={idx === conventionalStops.length - 1}
                     onClick={() => handleMoveStop(idx, 'down')}
-                    className="p-1 rounded-lg border border-slate-200 bg-white hover:bg-slate-100 disabled:opacity-30 text-slate-600"
+                    className="p-1 rounded-lg border border-line bg-white hover:bg-surface-muted disabled:opacity-30 text-muted"
                     title="Pindahkan Lebih Akhir"
                   >
                     <ArrowDown className="w-3.5 h-3.5" />
@@ -544,7 +544,7 @@ export const EvaluationPage: React.FC = () => {
           </div>
 
           {/* Depot Akhir */}
-          <div className="p-3 bg-red-50 border border-red-200 rounded-xl flex items-center gap-2.5 text-xs">
+          <div className="p-3 bg-red-50 border border-red-200 rounded-md flex items-center gap-2.5 text-xs">
             <div className="w-6 h-6 rounded-lg bg-red-600 text-white font-bold flex items-center justify-center flex-shrink-0 text-[10px]">
               D
             </div>
@@ -558,11 +558,11 @@ export const EvaluationPage: React.FC = () => {
         </div>
 
         {/* Kolom Kanan: Peta Komparasi Jalur Berwarna (7 Kolom) */}
-        <div className="lg:col-span-7 bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-3">
-          <div className="flex justify-between items-center pb-2 border-b border-slate-100">
+        <div className="lg:col-span-7 bg-white p-5 rounded-md border border-line shadow-xs space-y-3">
+          <div className="flex justify-between items-center pb-2 border-b border-line">
             <div className="flex items-center gap-2">
               <Layers className="w-4 h-4 text-blue-600" />
-              <h3 className="text-sm font-bold text-slate-900">
+              <h3 className="text-sm font-bold text-ink">
                 Visualisasi Jalur Rute pada Peta:
               </h3>
             </div>
@@ -581,7 +581,7 @@ export const EvaluationPage: React.FC = () => {
           </div>
 
           {/* Peta Leaflet Berdampingan */}
-          <div className="h-[480px] w-full rounded-2xl overflow-hidden border border-slate-200 relative">
+          <div className="h-[480px] w-full rounded-md overflow-hidden border border-line relative">
             <MapContainer
               center={[depotCoord.lat, depotCoord.lng]}
               zoom={12}
@@ -611,8 +611,8 @@ export const EvaluationPage: React.FC = () => {
                 >
                   <Popup>
                     <div className="font-sans text-xs">
-                      <strong className="block text-slate-900">{stop.namaToko}</strong>
-                      <span className="text-slate-600">{stop.alamat}</span>
+                      <strong className="block text-ink">{stop.namaToko}</strong>
+                      <span className="text-muted">{stop.alamat}</span>
                     </div>
                   </Popup>
                 </Marker>

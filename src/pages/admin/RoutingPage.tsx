@@ -436,7 +436,7 @@ export const RoutingPage: React.FC = () => {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px]">
         <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
-        <p className="mt-3 text-xs text-slate-500 font-medium">Memuat data persiapan rute...</p>
+        <p className="mt-3 text-xs text-muted font-medium">Memuat data persiapan rute...</p>
       </div>
     );
   }
@@ -450,9 +450,9 @@ export const RoutingPage: React.FC = () => {
             <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-800">
               Metode Saving Matrix (CVRP)
             </span>
-            <h1 className="text-2xl font-bold text-slate-900">Penentuan Rute Distribusi Optimal</h1>
+            <h1 className="text-2xl font-bold text-ink">Penentuan Rute Distribusi Optimal</h1>
           </div>
-          <p className="text-sm text-slate-500 mt-0.5">
+          <p className="text-sm text-muted mt-0.5">
             Optimasi urutan pengiriman barang CV SP Plastik ke toko-toko pelanggan untuk meminimalkan jarak dan biaya BBM.
           </p>
         </div>
@@ -460,7 +460,7 @@ export const RoutingPage: React.FC = () => {
         {calculationLogs && (
           <button
             onClick={() => setIsDetailLogModalOpen(true)}
-            className="flex items-center gap-2 px-3.5 py-2 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 rounded-xl text-xs font-semibold shadow-xs transition"
+            className="flex items-center gap-2 px-3.5 py-2 bg-white border border-line hover:bg-surface-subtle text-ink rounded-md text-xs font-semibold shadow-xs transition"
           >
             <FileText className="w-4 h-4 text-blue-600" />
             <span>Detail Perhitungan (Bahan Bab 4)</span>
@@ -470,25 +470,25 @@ export const RoutingPage: React.FC = () => {
 
       {/* Notifications */}
       {successMsg && (
-        <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center gap-3 text-sm text-emerald-800">
+        <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-md flex items-center gap-3 text-sm text-emerald-800">
           <CheckCircle2 className="w-5 h-5 flex-shrink-0 text-emerald-600" />
           <span>{successMsg}</span>
         </div>
       )}
 
       {errorMsg && (
-        <div className="p-4 bg-red-50 border border-red-200 rounded-xl flex items-center gap-3 text-sm text-red-800">
+        <div className="p-4 bg-red-50 border border-red-200 rounded-md flex items-center gap-3 text-sm text-red-800">
           <AlertCircle className="w-5 h-5 flex-shrink-0 text-red-600" />
           <span>{errorMsg}</span>
         </div>
       )}
 
       {/* Panel 1: Konfigurasi & Seleksi Pesanan Siap */}
-      <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs space-y-4">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-3 border-b border-slate-100">
+      <div className="bg-white p-6 rounded-md border border-line shadow-xs space-y-4">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-3 border-b border-line">
           <div className="flex items-center gap-2">
             <Layers className="w-5 h-5 text-blue-600" />
-            <h2 className="text-base font-bold text-slate-900">
+            <h2 className="text-base font-bold text-ink">
               1. Pilih Pesanan Siap Kirim ({readyOrders.length} Pesanan)
             </h2>
           </div>
@@ -500,11 +500,11 @@ export const RoutingPage: React.FC = () => {
             >
               {selectedOrderIds.length === readyOrders.length ? 'Batal Pilih Semua' : 'Pilih Semua'}
             </button>
-            <span className="text-xs text-slate-400">|</span>
+            <span className="text-xs text-subtle">|</span>
             <button
               onClick={loadInitialData}
               title="Refresh pesanan"
-              className="text-xs text-slate-500 hover:text-slate-800 flex items-center gap-1"
+              className="text-xs text-muted hover:text-ink flex items-center gap-1"
             >
               <RefreshCw className="w-3.5 h-3.5" />
               <span>Muat Ulang</span>
@@ -513,10 +513,10 @@ export const RoutingPage: React.FC = () => {
         </div>
 
         {readyOrders.length === 0 ? (
-          <div className="p-8 text-center bg-slate-50 rounded-xl border border-dashed border-slate-200 text-slate-500 text-xs">
+          <div className="p-8 text-center bg-surface-subtle rounded-md border border-dashed border-line text-muted text-xs">
             <RouteIcon className="w-8 h-8 text-slate-300 mx-auto mb-2" />
-            <p className="font-semibold text-slate-700">Tidak ada pesanan berstatus "Siap Kirim"</p>
-            <p className="text-slate-400 mt-1">
+            <p className="font-semibold text-ink">Tidak ada pesanan berstatus "Siap Kirim"</p>
+            <p className="text-subtle mt-1">
               Tim gudang perlu mengonfirmasi kesiapan pesanan terlebih dahulu di dashboard gudang.
             </p>
           </div>
@@ -528,10 +528,10 @@ export const RoutingPage: React.FC = () => {
                 <div
                   key={ord.id}
                   onClick={() => handleToggleOrder(ord.id)}
-                  className={`p-3 rounded-xl border text-xs cursor-pointer transition flex items-start gap-2.5 ${
+                  className={`p-3 rounded-md border text-xs cursor-pointer transition flex items-start gap-2.5 ${
                     isSelected
                       ? 'bg-blue-50/70 border-blue-300 text-blue-900 shadow-xs'
-                      : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100'
+                      : 'bg-surface-subtle border-line text-muted hover:bg-surface-muted'
                   }`}
                 >
                   <input
@@ -542,9 +542,9 @@ export const RoutingPage: React.FC = () => {
                   />
                   <div className="flex-1 min-w-0">
                     <p className="font-bold truncate">{ord.customers?.nama_toko}</p>
-                    <p className="text-[11px] text-slate-500 truncate">{ord.customers?.alamat}</p>
+                    <p className="text-[11px] text-muted truncate">{ord.customers?.alamat}</p>
                     <div className="mt-1 flex items-center justify-between text-[11px]">
-                      <span className="font-mono text-slate-500">
+                      <span className="font-mono text-muted">
                         {ord.customers?.latitude.toFixed(4)}, {ord.customers?.longitude.toFixed(4)}
                       </span>
                       <span className="font-bold text-blue-700 font-mono">
@@ -559,11 +559,11 @@ export const RoutingPage: React.FC = () => {
         )}
 
         {/* Baris Parameter Solving */}
-        <div className="pt-3 border-t border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div className="pt-3 border-t border-line flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div className="flex flex-wrap items-center gap-4 text-xs">
             {/* Kapasitas Q */}
             <div className="flex items-center gap-2">
-              <span className="font-semibold text-slate-700">Kapasitas Armada ($Q$):</span>
+              <span className="font-semibold text-ink">Kapasitas Armada ($Q$):</span>
               <div className="relative">
                 <input
                   type="number"
@@ -571,25 +571,25 @@ export const RoutingPage: React.FC = () => {
                   step="50"
                   value={selectedCapacityKg}
                   onChange={(e) => setSelectedCapacityKg(parseFloat(e.target.value) || 1000)}
-                  className="w-24 pl-2 pr-7 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-xs font-mono font-bold text-center"
+                  className="w-24 pl-2 pr-7 py-1.5 bg-surface-subtle border border-line rounded-lg text-xs font-mono font-bold text-center"
                 />
-                <span className="absolute inset-y-0 right-0 pr-2 flex items-center pointer-events-none text-slate-400 text-[10px]">
+                <span className="absolute inset-y-0 right-0 pr-2 flex items-center pointer-events-none text-subtle text-[10px]">
                   kg
                 </span>
               </div>
             </div>
 
             {/* Info Depot */}
-            <div className="text-slate-500 flex items-center gap-1.5">
+            <div className="text-muted flex items-center gap-1.5">
               <MapPin className="w-3.5 h-3.5 text-red-500" />
-              <span>Depot: <strong className="text-slate-700">{depotConfig.nama}</strong></span>
+              <span>Depot: <strong className="text-ink">{depotConfig.nama}</strong></span>
             </div>
           </div>
 
           <button
             onClick={handleSolveRoutes}
             disabled={isSolving || readyOrders.length === 0 || selectedOrderIds.length === 0}
-            className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-40 text-white font-semibold rounded-xl text-sm shadow-md hover:shadow-lg transition"
+            className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-40 text-white font-semibold rounded-md text-sm shadow-md hover:shadow-lg transition"
           >
             {isSolving ? (
               <>
@@ -611,20 +611,20 @@ export const RoutingPage: React.FC = () => {
         <div className="space-y-6 animate-fadeIn">
           {/* Summary Metrik Rute Keseluruhan */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <div className="p-4 bg-white rounded-2xl border border-slate-200 shadow-xs">
-              <span className="text-[11px] font-semibold text-slate-500 uppercase">Total Rute</span>
+            <div className="p-4 bg-white rounded-md border border-line shadow-xs">
+              <span className="text-[11px] font-semibold text-muted ">Total Rute</span>
               <p className="text-xl font-extrabold text-blue-700 mt-1">{routes.length} Armada</p>
             </div>
-            <div className="p-4 bg-white rounded-2xl border border-slate-200 shadow-xs">
-              <span className="text-[11px] font-semibold text-slate-500 uppercase">Total Jarak Tempuh</span>
-              <p className="text-xl font-extrabold text-slate-900 mt-1">{totalCumulative.distanceKm.toFixed(2)} km</p>
+            <div className="p-4 bg-white rounded-md border border-line shadow-xs">
+              <span className="text-[11px] font-semibold text-muted ">Total Jarak Tempuh</span>
+              <p className="text-xl font-extrabold text-ink mt-1">{totalCumulative.distanceKm.toFixed(2)} km</p>
             </div>
-            <div className="p-4 bg-white rounded-2xl border border-slate-200 shadow-xs">
-              <span className="text-[11px] font-semibold text-slate-500 uppercase">Estimasi Waktu</span>
+            <div className="p-4 bg-white rounded-md border border-line shadow-xs">
+              <span className="text-[11px] font-semibold text-muted ">Estimasi Waktu</span>
               <p className="text-xl font-extrabold text-emerald-600 mt-1">{totalCumulative.timeMin} menit</p>
             </div>
-            <div className="p-4 bg-white rounded-2xl border border-slate-200 shadow-xs">
-              <span className="text-[11px] font-semibold text-slate-500 uppercase">Estimasi Biaya BBM</span>
+            <div className="p-4 bg-white rounded-md border border-line shadow-xs">
+              <span className="text-[11px] font-semibold text-muted ">Estimasi Biaya BBM</span>
               <p className="text-xl font-extrabold text-amber-600 mt-1">
                 Rp {totalCumulative.fuelCostRp.toLocaleString('id-ID')}
               </p>
@@ -632,22 +632,22 @@ export const RoutingPage: React.FC = () => {
           </div>
 
           {/* Visualisasi Polyline Peta Leaflet */}
-          <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs space-y-3">
+          <div className="bg-white p-4 rounded-md border border-line shadow-xs space-y-3">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
               <div className="flex items-center gap-2">
                 <MapPin className="w-4 h-4 text-blue-600" />
-                <h3 className="font-bold text-slate-900 text-sm">
+                <h3 className="font-bold text-ink text-sm">
                   Peta Rute Distribusi (OpenStreetMap + Leaflet Polyline)
                 </h3>
               </div>
               <div className="flex items-center gap-2 text-xs">
-                <span className="text-slate-500">Sorot rute:</span>
+                <span className="text-muted">Sorot rute:</span>
                 <select
                   value={activeRouteIndex === null ? 'all' : activeRouteIndex}
                   onChange={(e) =>
                     setActiveRouteIndex(e.target.value === 'all' ? null : parseInt(e.target.value))
                   }
-                  className="px-2.5 py-1 bg-slate-50 border border-slate-300 rounded-lg text-xs font-semibold focus:outline-none"
+                  className="px-2.5 py-1 bg-surface-subtle border border-line rounded-lg text-xs font-semibold focus:outline-none"
                 >
                   <option value="all">Tampilkan Semua Rute</option>
                   {routes.map((_, idx) => (
@@ -670,10 +670,10 @@ export const RoutingPage: React.FC = () => {
           {/* Panel Rincian Rute & Penyesuaian Stop */}
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="font-bold text-slate-900 text-base">
+              <h3 className="font-bold text-ink text-base">
                 2. Rincian & Penyesuaian Urutan Stop per Armada
               </h3>
-              <span className="text-xs text-slate-500">
+              <span className="text-xs text-muted">
                 Gunakan tombol naik/turun atau pindah rute untuk penyesuaian manual.
               </span>
             </div>
@@ -686,11 +686,11 @@ export const RoutingPage: React.FC = () => {
                 return (
                   <div
                     key={r.tempId}
-                    className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden flex flex-col justify-between"
+                    className="bg-white rounded-md border border-line shadow-xs overflow-hidden flex flex-col justify-between"
                   >
                     {/* Header Rute */}
                     <div
-                      className="p-4 border-b border-slate-100 flex items-center justify-between"
+                      className="p-4 border-b border-line flex items-center justify-between"
                       style={{ borderTop: `4px solid ${color}` }}
                     >
                       <div className="flex items-center gap-2">
@@ -698,13 +698,13 @@ export const RoutingPage: React.FC = () => {
                           className="w-3 h-3 rounded-full"
                           style={{ backgroundColor: color }}
                         />
-                        <h4 className="font-extrabold text-slate-900 text-sm">
+                        <h4 className="font-extrabold text-ink text-sm">
                           Rute #{rIdx + 1} ({r.stops.length} Stop Toko)
                         </h4>
                       </div>
 
                       <div className="flex items-center gap-2 text-xs font-mono">
-                        <span className="px-2 py-0.5 bg-slate-100 rounded text-slate-700 font-bold">
+                        <span className="px-2 py-0.5 bg-surface-muted rounded text-ink font-bold">
                           {r.totalJarakKm} km
                         </span>
                         <span
@@ -719,7 +719,7 @@ export const RoutingPage: React.FC = () => {
                         <button
                           type="button"
                           onClick={() => handleDownloadSuratJalan(r, rIdx)}
-                          className="p-1 px-2 rounded bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 transition flex items-center gap-1 font-sans font-semibold text-[11px]"
+                          className="p-1 px-2 rounded bg-white hover:bg-surface-muted text-ink border border-line transition flex items-center gap-1 font-sans font-semibold text-[11px]"
                           title="Unduh Surat Jalan PDF"
                         >
                           <FileText className="w-3.5 h-3.5 text-blue-600" />
@@ -729,15 +729,15 @@ export const RoutingPage: React.FC = () => {
                     </div>
 
                     {/* Penugasan Armada & Driver */}
-                    <div className="p-4 bg-slate-50/60 border-b border-slate-100 grid grid-cols-2 gap-3">
+                    <div className="p-4 bg-surface-subtle/60 border-b border-line grid grid-cols-2 gap-3">
                       <div>
-                        <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                        <label className="block text-[11px] font-semibold text-muted mb-1">
                           Armada Kendaraan *
                         </label>
                         <select
                           value={r.vehicleId}
                           onChange={(e) => handleAssignVehicle(rIdx, e.target.value)}
-                          className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs font-medium text-slate-800 focus:ring-2 focus:ring-blue-600"
+                          className="w-full px-2.5 py-1.5 bg-white border border-line rounded-lg text-xs font-medium text-ink focus:ring-2 focus:ring-blue-600"
                         >
                           <option value="">-- Pilih Kendaraan --</option>
                           {vehicles.map((v) => (
@@ -749,13 +749,13 @@ export const RoutingPage: React.FC = () => {
                       </div>
 
                       <div>
-                        <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                        <label className="block text-[11px] font-semibold text-muted mb-1">
                           Driver Pengiriman *
                         </label>
                         <select
                           value={r.driverId}
                           onChange={(e) => handleAssignDriver(rIdx, e.target.value)}
-                          className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs font-medium text-slate-800 focus:ring-2 focus:ring-blue-600"
+                          className="w-full px-2.5 py-1.5 bg-white border border-line rounded-lg text-xs font-medium text-ink focus:ring-2 focus:ring-blue-600"
                         >
                           <option value="">-- Pilih Driver --</option>
                           {drivers.map((d) => (
@@ -782,8 +782,8 @@ export const RoutingPage: React.FC = () => {
                               {stop.urutan}
                             </span>
                             <div className="truncate">
-                              <p className="font-bold text-slate-900 truncate">{stop.namaToko}</p>
-                              <p className="text-[11px] text-slate-500 font-mono">
+                              <p className="font-bold text-ink truncate">{stop.namaToko}</p>
+                              <p className="text-[11px] text-muted font-mono">
                                 +{stop.jarakDariSebelumnyaKm} km &bull; {stop.muatanKg} kg
                               </p>
                             </div>
@@ -795,7 +795,7 @@ export const RoutingPage: React.FC = () => {
                               disabled={sIdx === 0}
                               onClick={() => handleMoveStopUp(rIdx, sIdx)}
                               title="Pindah ke urutan sebelumnya"
-                              className="p-1 text-slate-400 hover:text-slate-800 disabled:opacity-20"
+                              className="p-1 text-subtle hover:text-ink disabled:opacity-20"
                             >
                               <ArrowUp className="w-3.5 h-3.5" />
                             </button>
@@ -803,7 +803,7 @@ export const RoutingPage: React.FC = () => {
                               disabled={sIdx === r.stops.length - 1}
                               onClick={() => handleMoveStopDown(rIdx, sIdx)}
                               title="Pindah ke urutan berikutnya"
-                              className="p-1 text-slate-400 hover:text-slate-800 disabled:opacity-20"
+                              className="p-1 text-subtle hover:text-ink disabled:opacity-20"
                             >
                               <ArrowDown className="w-3.5 h-3.5" />
                             </button>
@@ -818,7 +818,7 @@ export const RoutingPage: React.FC = () => {
                                   }
                                 }}
                                 title="Pindahkan toko ini ke rute armada lain"
-                                className="ml-1 text-[10px] bg-slate-100 hover:bg-slate-200 text-slate-700 rounded px-1.5 py-0.5 border border-slate-300 font-semibold"
+                                className="ml-1 text-[10px] bg-surface-muted hover:bg-slate-200 text-ink rounded px-1.5 py-0.5 border border-line font-semibold"
                               >
                                 <option value="">Pindah...</option>
                                 {routes.map((_, otherIdx) =>
@@ -836,13 +836,13 @@ export const RoutingPage: React.FC = () => {
                     </div>
 
                     {/* Estimasi Operasional Rute */}
-                    <div className="p-3 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-600">
+                    <div className="p-3 bg-surface-subtle border-t border-line flex items-center justify-between text-[11px] text-muted">
                       <div className="flex items-center gap-1">
-                        <Clock className="w-3.5 h-3.5 text-slate-400" />
+                        <Clock className="w-3.5 h-3.5 text-subtle" />
                         <span>Estimasi: <strong>{r.estimasiWaktuMenit} menit</strong></span>
                       </div>
                       <div className="flex items-center gap-1">
-                        <Fuel className="w-3.5 h-3.5 text-slate-400" />
+                        <Fuel className="w-3.5 h-3.5 text-subtle" />
                         <span>BBM: <strong>Rp {r.estimasiBiayaBbm.toLocaleString('id-ID')}</strong></span>
                       </div>
                     </div>
@@ -853,7 +853,7 @@ export const RoutingPage: React.FC = () => {
           </div>
 
           {/* Panel 3: Finalisasi & Simpan ke Database */}
-          <div className="p-6 bg-gradient-to-r from-slate-900 to-indigo-950 rounded-2xl text-white shadow-xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div className="p-6 bg-ink rounded-md text-white shadow-md flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
               <h3 className="text-base font-bold">3. Finalisasi Rute Pengiriman</h3>
               <p className="text-xs text-slate-300 mt-0.5">
@@ -863,21 +863,21 @@ export const RoutingPage: React.FC = () => {
 
             <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
               <div>
-                <label className="block text-[10px] text-slate-300 uppercase font-semibold mb-0.5">
+                <label className="block text-[10px] text-slate-300  font-semibold mb-0.5">
                   Tanggal Pengiriman:
                 </label>
                 <input
                   type="date"
                   value={deliveryDate}
                   onChange={(e) => setDeliveryDate(e.target.value)}
-                  className="px-3 py-1.5 bg-white/10 border border-white/20 rounded-xl text-xs text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  className="px-3 py-1.5 bg-white/10 border border-white/20 rounded-md text-xs text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
                 />
               </div>
 
               <button
                 onClick={handleSaveAllFinalRoutes}
                 disabled={isSaving}
-                className="mt-3 sm:mt-0 px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white font-bold rounded-xl text-xs sm:text-sm shadow-md transition flex items-center gap-2"
+                className="mt-3 sm:mt-0 px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white font-bold rounded-md text-xs sm:text-sm shadow-md transition flex items-center gap-2"
               >
                 {isSaving ? (
                   <>
@@ -898,20 +898,20 @@ export const RoutingPage: React.FC = () => {
 
       {/* Modal 4: Detail Perhitungan Algoritma untuk Bahan Laporan Bab 4 */}
       {isDetailLogModalOpen && calculationLogs && (
-        <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-xl border border-slate-200 max-w-4xl w-full overflow-hidden animate-scaleIn">
-            <div className="flex justify-between items-center px-6 py-4 border-b border-slate-200">
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-ink/50  flex items-center justify-center p-4">
+          <div className="bg-white rounded-md shadow-md border border-line max-w-4xl w-full overflow-hidden animate-scaleIn">
+            <div className="flex justify-between items-center px-6 py-4 border-b border-line">
               <div>
-                <h2 className="text-base font-bold text-slate-900">
+                <h2 className="text-base font-bold text-ink">
                   Detail Log Algoritma Clarke-Wright Saving Matrix
                 </h2>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-muted">
                   Data pembuktian matematis untuk Lampiran dan Bab 4 Laporan Kerja Praktek.
                 </p>
               </div>
               <button
                 onClick={() => setIsDetailLogModalOpen(false)}
-                className="p-1.5 text-slate-400 hover:text-slate-700 rounded-lg transition"
+                className="p-1.5 text-subtle hover:text-ink rounded-lg transition"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -920,18 +920,18 @@ export const RoutingPage: React.FC = () => {
             <div className="p-6 space-y-6 max-h-[75vh] overflow-y-auto text-xs">
               {/* Bagian A: Matriks Penghematan Terurut (Savings List) */}
               <div>
-                <h3 className="font-bold text-slate-900 text-sm mb-2 flex items-center gap-1.5">
+                <h3 className="font-bold text-ink text-sm mb-2 flex items-center gap-1.5">
                   <span className="w-5 h-5 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-xs">
                     1
                   </span>
                   Tabel Nilai Penghematan Terurut (Sorted Savings)
                 </h3>
-                <p className="text-slate-500 mb-2">
+                <p className="text-muted mb-2">
                   Dihitung menggunakan rumus $S(i, j) = d(0, i) + d(0, j) - d(i, j)$ dan diurutkan menurun. Nilai $\le 0$ dibuang.
                 </p>
-                <div className="border border-slate-200 rounded-xl overflow-x-auto">
+                <div className="border border-line rounded-md overflow-x-auto">
                   <table className="w-full text-left">
-                    <thead className="bg-slate-50 font-semibold text-slate-700 border-b border-slate-200">
+                    <thead className="bg-surface-subtle font-semibold text-ink border-b border-line">
                       <tr>
                         <th className="py-2 px-3">No</th>
                         <th className="py-2 px-3">Pasangan Node (i, j)</th>
@@ -940,9 +940,9 @@ export const RoutingPage: React.FC = () => {
                     </thead>
                     <tbody className="divide-y divide-slate-100 font-mono">
                       {calculationLogs.savingsList.slice(0, 15).map((s, idx) => (
-                        <tr key={idx} className="hover:bg-slate-50">
-                          <td className="py-1.5 px-3 text-slate-400">{idx + 1}</td>
-                          <td className="py-1.5 px-3 font-semibold text-slate-800">
+                        <tr key={idx} className="hover:bg-surface-subtle">
+                          <td className="py-1.5 px-3 text-subtle">{idx + 1}</td>
+                          <td className="py-1.5 px-3 font-semibold text-ink">
                             Node {s.i} &mdash; Node {s.j}
                           </td>
                           <td className="py-1.5 px-3 text-right text-blue-700 font-bold">
@@ -953,7 +953,7 @@ export const RoutingPage: React.FC = () => {
                     </tbody>
                   </table>
                   {calculationLogs.savingsList.length > 15 && (
-                    <div className="p-2 text-center text-slate-400 bg-slate-50 text-[11px]">
+                    <div className="p-2 text-center text-subtle bg-surface-subtle text-[11px]">
                       ... dan {calculationLogs.savingsList.length - 15} pasangan saving lainnya.
                     </div>
                   )}
@@ -962,18 +962,18 @@ export const RoutingPage: React.FC = () => {
 
               {/* Bagian B: Log Langkah Penggabungan (Trace Merging) */}
               <div>
-                <h3 className="font-bold text-slate-900 text-sm mb-2 flex items-center gap-1.5">
+                <h3 className="font-bold text-ink text-sm mb-2 flex items-center gap-1.5">
                   <span className="w-5 h-5 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-xs">
                     2
                   </span>
                   Riwayat Penggabungan Rute (Merge Steps Trace)
                 </h3>
-                <p className="text-slate-500 mb-2">
+                <p className="text-muted mb-2">
                   Pencatatan keputusan algoritma: MERGED (gabung), REJECTED_CAPACITY (muatan melebihi $Q$), atau REJECTED_NOT_EXTERIOR (bukan di ujung rute).
                 </p>
-                <div className="border border-slate-200 rounded-xl overflow-x-auto">
+                <div className="border border-line rounded-md overflow-x-auto">
                   <table className="w-full text-left">
-                    <thead className="bg-slate-50 font-semibold text-slate-700 border-b border-slate-200">
+                    <thead className="bg-surface-subtle font-semibold text-ink border-b border-line">
                       <tr>
                         <th className="py-2 px-3">Step</th>
                         <th className="py-2 px-3">Pasangan</th>
@@ -984,9 +984,9 @@ export const RoutingPage: React.FC = () => {
                     </thead>
                     <tbody className="divide-y divide-slate-100">
                       {calculationLogs.mergeSteps.map((m) => (
-                        <tr key={m.step} className="hover:bg-slate-50">
-                          <td className="py-1.5 px-3 font-mono text-slate-400">{m.step}</td>
-                          <td className="py-1.5 px-3 font-mono font-semibold text-slate-800">
+                        <tr key={m.step} className="hover:bg-surface-subtle">
+                          <td className="py-1.5 px-3 font-mono text-subtle">{m.step}</td>
+                          <td className="py-1.5 px-3 font-mono font-semibold text-ink">
                             ({m.pair[0]}, {m.pair[1]})
                           </td>
                           <td className="py-1.5 px-3 font-mono text-blue-600">{m.savingKm} km</td>
@@ -1002,17 +1002,17 @@ export const RoutingPage: React.FC = () => {
                               </span>
                             )}
                             {m.action === 'REJECTED_NOT_EXTERIOR' && (
-                              <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-700">
+                              <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-surface-muted text-ink">
                                 REJECT (Bukan Ujung)
                               </span>
                             )}
                             {m.action === 'REJECTED_SAME_ROUTE' && (
-                              <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-700">
+                              <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-surface-muted text-ink">
                                 REJECT (Rute Sama)
                               </span>
                             )}
                           </td>
-                          <td className="py-1.5 px-3 text-[11px] text-slate-600">
+                          <td className="py-1.5 px-3 text-[11px] text-muted">
                             {m.action === 'MERGED'
                               ? `Rute Baru: [${m.resultRoute?.join(' → ')}]`
                               : m.reason || '-'}
@@ -1025,10 +1025,10 @@ export const RoutingPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="px-6 py-3.5 bg-slate-50 border-t border-slate-200 flex justify-end">
+            <div className="px-6 py-3.5 bg-surface-subtle border-t border-line flex justify-end">
               <button
                 onClick={() => setIsDetailLogModalOpen(false)}
-                className="px-4 py-2 bg-white border border-slate-300 text-slate-700 font-medium rounded-xl text-xs hover:bg-slate-100 transition"
+                className="px-4 py-2 bg-white border border-line text-ink font-medium rounded-md text-xs hover:bg-surface-muted transition"
               >
                 Tutup
               </button>

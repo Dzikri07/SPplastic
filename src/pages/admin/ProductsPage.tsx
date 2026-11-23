@@ -170,15 +170,15 @@ export const ProductsPage: React.FC = () => {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Master Data Produk</h1>
-          <p className="text-sm text-slate-500 mt-0.5">
+          <h1 className="font-display text-2xl font-bold tracking-tight text-ink">Master Data Produk</h1>
+          <p className="text-sm text-muted mt-1">
             Daftar komoditas kantong & perlengkapan plastik CV SP Plastik beserta berat per unit.
           </p>
         </div>
 
         <button
           onClick={openAddModal}
-          className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl shadow-sm hover:shadow transition"
+          className="h-11 px-4 inline-flex items-center gap-2 bg-petrol-900 hover:bg-petrol-800 text-white text-[15px] font-semibold rounded-md transition-colors focus:outline-none focus-visible:ring-[3px] focus-visible:ring-offset-2 focus-visible:ring-teal-600/50 cursor-pointer"
         >
           <Plus className="w-4 h-4" />
           <span>Tambah Produk</span>
@@ -187,90 +187,96 @@ export const ProductsPage: React.FC = () => {
 
       {/* Notifications */}
       {successMsg && (
-        <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center gap-3 text-sm text-emerald-800">
-          <CheckCircle2 className="w-5 h-5 flex-shrink-0 text-emerald-600" />
+        <div
+          role="alert"
+          className="border-l-2 border-teal-600 bg-[#EDFAF7] px-3.5 py-2.5 text-sm text-[#0F4E4A] flex items-center gap-2.5"
+        >
+          <CheckCircle2 className="w-4 h-4 shrink-0 text-teal-600" />
           <span>{successMsg}</span>
         </div>
       )}
 
       {errorMsg && (
-        <div className="p-4 bg-red-50 border border-red-200 rounded-xl flex items-center gap-3 text-sm text-red-800">
-          <AlertCircle className="w-5 h-5 flex-shrink-0 text-red-600" />
+        <div
+          role="alert"
+          className="border-l-2 border-danger bg-danger-bg px-3.5 py-2.5 text-sm text-danger-text flex items-center gap-2.5"
+        >
+          <AlertCircle className="w-4 h-4 shrink-0 text-danger" />
           <span>{errorMsg}</span>
         </div>
       )}
 
       {/* Filter Bar */}
-      <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs flex flex-col sm:flex-row justify-between items-center gap-4">
+      <div className="bg-white p-4 rounded-md border border-border flex flex-col sm:flex-row justify-between items-center gap-4">
         <div className="relative w-full sm:w-80">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+          <Search className="w-4 h-4 text-subtle absolute left-3.5 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Cari nama produk plastik..."
-            className="w-full pl-9 pr-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white transition"
+            className="w-full h-11 pl-9 pr-3.5 bg-white border border-border rounded-md text-[15px] text-ink placeholder:text-subtle focus:outline-none focus:border-teal-600 focus:ring-[3px] focus:ring-teal-600/20 transition-colors"
           />
         </div>
 
-        <div className="text-xs text-slate-500 font-medium">
-          Total Varian: <span className="font-bold text-slate-800">{products.length}</span>
+        <div className="text-sm text-muted">
+          Total varian: <span className="font-semibold text-ink">{products.length}</span>
         </div>
       </div>
 
       {/* Products Table */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
+      <div className="bg-white rounded-md border border-border overflow-hidden">
         {loading ? (
-          <div className="p-12 text-center text-slate-500 flex flex-col items-center gap-3">
-            <div className="w-8 h-8 border-3 border-blue-600 border-t-transparent rounded-full animate-spin" />
+          <div className="p-12 text-center text-muted flex flex-col items-center gap-3">
+            <span className="w-5 h-5 rounded-full border-2 border-border-strong border-t-petrol-900 animate-spin motion-reduce:animate-none" />
             <p className="text-sm">Memuat katalog produk...</p>
           </div>
         ) : filteredProducts.length === 0 ? (
-          <div className="p-12 text-center text-slate-500">
-            <Package className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-            <p className="font-semibold text-slate-700">Belum ada produk</p>
-            <p className="text-xs text-slate-400 mt-1">
+          <div className="p-12 text-center text-muted">
+            <Package className="w-10 h-10 text-subtle mx-auto mb-3" />
+            <p className="font-semibold text-ink">Belum ada produk</p>
+            <p className="text-xs text-muted mt-1">
               Tambahkan produk untuk dapat dimasukkan ke dalam pesanan distribusi.
             </p>
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm text-slate-600">
-              <thead className="bg-slate-50 text-slate-700 text-xs font-semibold uppercase tracking-wider border-b border-slate-200">
+            <table className="w-full text-left text-sm text-ink">
+              <thead className="bg-surface-subtle text-muted text-xs font-medium border-b border-border">
                 <tr>
-                  <th className="py-3.5 px-4">Nama Produk</th>
-                  <th className="py-3.5 px-4 text-center">Stok</th>
-                  <th className="py-3.5 px-4">Harga Satuan</th>
-                  <th className="py-3.5 px-4">Berat Per Unit (kg)</th>
-                  <th className="py-3.5 px-4 text-right">Aksi</th>
+                  <th className="py-3 px-4">Nama produk</th>
+                  <th className="py-3 px-4 text-center">Stok</th>
+                  <th className="py-3 px-4">Harga satuan</th>
+                  <th className="py-3 px-4">Berat per unit</th>
+                  <th className="py-3 px-4 text-right">Aksi</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-border">
                 {filteredProducts.map((p) => (
-                  <tr key={p.id} className="hover:bg-slate-50/80 transition">
+                  <tr key={p.id} className="hover:bg-surface-subtle transition-colors">
                     <td className="py-3.5 px-4">
-                      <div className="font-semibold text-slate-900">{p.nama}</div>
+                      <div className="font-semibold text-ink">{p.nama}</div>
                     </td>
                     <td className="py-3.5 px-4 text-center">
                       <span
-                        className={`inline-flex items-center gap-1 font-semibold text-xs px-2.5 py-1 rounded-full ${
+                        className={`inline-flex items-center gap-1 font-medium text-xs px-2.5 py-1 rounded-md border ${
                           p.stok <= 20
-                            ? 'bg-red-100 text-red-800'
+                            ? 'bg-danger-bg text-danger-text border-[#FECDCA]'
                             : p.stok <= 50
-                            ? 'bg-amber-100 text-amber-800'
-                            : 'bg-emerald-100 text-emerald-800'
+                            ? 'bg-[#FEF6E7] text-[#874D00] border-[#FADBA2]'
+                            : 'bg-[#E6F4F1] text-[#0F4E4A] border-[#BDE3DB]'
                         }`}
                       >
                         <Boxes className="w-3.5 h-3.5" />
                         {p.stok} unit
                       </span>
                     </td>
-                    <td className="py-3.5 px-4 font-medium text-slate-800">
+                    <td className="py-3.5 px-4 font-medium text-ink">
                       Rp {p.harga.toLocaleString('id-ID')}
                     </td>
                     <td className="py-3.5 px-4">
-                      <span className="inline-flex items-center gap-1 text-xs font-mono font-medium px-2 py-0.5 bg-slate-100 text-slate-700 rounded-md">
-                        <Weight className="w-3.5 h-3.5 text-blue-500" />
+                      <span className="inline-flex items-center gap-1 text-xs font-mono px-2 py-0.5 bg-surface-muted text-ink rounded-md border border-border">
+                        <Weight className="w-3.5 h-3.5 text-teal-600" />
                         {p.berat_per_unit_kg.toFixed(2)} kg
                       </span>
                     </td>
@@ -278,15 +284,15 @@ export const ProductsPage: React.FC = () => {
                       <div className="inline-flex items-center gap-1">
                         <button
                           onClick={() => openEditModal(p)}
-                          title="Edit Produk"
-                          className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition"
+                          title="Edit produk"
+                          className="p-1.5 text-muted hover:text-ink hover:bg-surface-muted rounded-md transition-colors"
                         >
                           <Edit2 className="w-4 h-4" />
                         </button>
                         <button
                           onClick={() => handleDelete(p.id, p.nama)}
-                          title="Hapus Produk"
-                          className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition"
+                          title="Hapus produk"
+                          className="p-1.5 text-danger-text hover:bg-danger-bg rounded-md transition-colors"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
@@ -302,15 +308,15 @@ export const ProductsPage: React.FC = () => {
 
       {/* Modal Form Tambah / Edit Produk */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-xl border border-slate-200 max-w-md w-full overflow-hidden animate-scaleIn">
-            <div className="flex justify-between items-center px-6 py-4 border-b border-slate-200">
-              <h2 className="text-base font-bold text-slate-900">
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-petrol-900/40 flex items-center justify-center p-4">
+          <div className="bg-white rounded-md border border-border max-w-md w-full overflow-hidden shadow-sm">
+            <div className="flex justify-between items-center px-6 py-4 border-b border-border">
+              <h2 className="font-display text-lg font-bold tracking-tight text-ink">
                 {isEditing ? 'Ubah Produk' : 'Tambah Produk Baru'}
               </h2>
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="p-1.5 text-slate-400 hover:text-slate-700 rounded-lg transition"
+                className="p-1 text-muted hover:text-ink rounded-md transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -318,30 +324,33 @@ export const ProductsPage: React.FC = () => {
 
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
               {formError && (
-                <div className="p-3.5 bg-red-50 border border-red-200 rounded-xl text-xs text-red-700 flex items-center gap-2">
-                  <AlertCircle className="w-4 h-4 flex-shrink-0 text-red-600" />
+                <div
+                  role="alert"
+                  className="border-l-2 border-danger bg-danger-bg px-3.5 py-2.5 text-xs text-danger-text flex items-center gap-2"
+                >
+                  <AlertCircle className="w-4 h-4 shrink-0 text-danger" />
                   <span>{formError}</span>
                 </div>
               )}
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
-                  Nama Produk *
+                <label className="block text-sm font-medium text-ink mb-1.5">
+                  Nama produk *
                 </label>
                 <input
                   type="text"
                   value={nama}
                   onChange={(e) => setNama(e.target.value)}
                   placeholder="Contoh: Plastik PE Bening Roll"
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white transition"
+                  className="w-full h-11 px-3.5 bg-white border border-border rounded-md text-[15px] text-ink placeholder:text-subtle focus:outline-none focus:border-teal-600 focus:ring-[3px] focus:ring-teal-600/20 transition-colors"
                   required
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
-                    Stok Tersedia *
+                  <label className="block text-sm font-medium text-ink mb-1.5">
+                    Stok tersedia *
                   </label>
                   <input
                     type="number"
@@ -349,14 +358,14 @@ export const ProductsPage: React.FC = () => {
                     step="1"
                     value={stok}
                     onChange={(e) => setStok(parseInt(e.target.value) || 0)}
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white transition"
+                    className="w-full h-11 px-3.5 bg-white border border-border rounded-md text-[15px] text-ink placeholder:text-subtle focus:outline-none focus:border-teal-600 focus:ring-[3px] focus:ring-teal-600/20 transition-colors"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
-                    Harga Satuan (Rp) *
+                  <label className="block text-sm font-medium text-ink mb-1.5">
+                    Harga satuan (Rp) *
                   </label>
                   <input
                     type="number"
@@ -364,19 +373,19 @@ export const ProductsPage: React.FC = () => {
                     step="500"
                     value={harga}
                     onChange={(e) => setHarga(parseFloat(e.target.value) || 0)}
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white transition"
+                    className="w-full h-11 px-3.5 bg-white border border-border rounded-md text-[15px] text-ink placeholder:text-subtle focus:outline-none focus:border-teal-600 focus:ring-[3px] focus:ring-teal-600/20 transition-colors"
                     required
                   />
                 </div>
               </div>
 
               <div>
-                <div className="flex justify-between items-center mb-1">
-                  <label className="text-xs font-semibold text-slate-700 uppercase tracking-wider">
-                    Berat Per Unit (kg) *
+                <div className="flex justify-between items-center mb-1.5">
+                  <label className="text-sm font-medium text-ink">
+                    Berat per unit (kg) *
                   </label>
-                  <span className="text-[11px] text-blue-600 font-medium">
-                    Kritis untuk Saving Matrix
+                  <span className="text-xs text-muted">
+                    Parameter Saving Matrix
                   </span>
                 </div>
                 <div className="relative">
@@ -387,33 +396,33 @@ export const ProductsPage: React.FC = () => {
                     value={beratPerUnitKg}
                     onChange={(e) => setBeratPerUnitKg(parseFloat(e.target.value) || 0)}
                     placeholder="0.50"
-                    className="w-full pl-3 pr-10 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white transition font-mono"
+                    className="w-full h-11 pl-3.5 pr-10 bg-white border border-border rounded-md text-[15px] text-ink placeholder:text-subtle focus:outline-none focus:border-teal-600 focus:ring-[3px] focus:ring-teal-600/20 transition-colors font-mono"
                     required
                   />
-                  <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-slate-400 text-xs font-bold">
+                  <div className="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none text-muted text-xs font-semibold">
                     kg
                   </div>
                 </div>
-                <p className="text-[11px] text-slate-500 mt-1">
-                  Digunakan untuk menghitung total kapasitas muatan kendaraan secara otomatis saat pelanggan memesan produk ini.
+                <p className="text-xs text-muted mt-1.5">
+                  Digunakan untuk menghitung total kapasitas muatan kendaraan secara otomatis saat pesanan dibuat.
                 </p>
               </div>
 
               {/* Actions */}
-              <div className="pt-4 border-t border-slate-200 flex justify-end gap-2.5">
+              <div className="pt-4 border-t border-border flex justify-end gap-2.5">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 border border-slate-300 text-slate-700 hover:bg-slate-50 font-medium rounded-xl text-sm transition"
+                  className="h-11 px-4 border border-border bg-white text-ink hover:bg-surface-muted font-medium rounded-md text-sm transition-colors cursor-pointer"
                 >
                   Batal
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl shadow-sm text-sm transition disabled:opacity-50"
+                  className="h-11 px-5 bg-petrol-900 hover:bg-petrol-800 text-white font-semibold rounded-md text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 disabled:opacity-60 cursor-pointer"
                 >
-                  {isSubmitting ? 'Menyimpan...' : isEditing ? 'Simpan Perubahan' : 'Tambahkan'}
+                  {isSubmitting ? 'Menyimpan...' : isEditing ? 'Simpan perubahan' : 'Tambahkan'}
                 </button>
               </div>
             </form>
