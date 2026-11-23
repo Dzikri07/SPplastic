@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Boxes,
@@ -11,6 +11,8 @@ import {
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthContext';
 import type { Product } from '../../types/database';
+import { useSupabaseRealtime } from '../../hooks/useSupabaseRealtime';
+import { RealtimeBadge } from '../../components/RealtimeBadge';
 
 export const GudangDashboard: React.FC = () => {
   const { profile } = useAuth();
@@ -19,7 +21,7 @@ export const GudangDashboard: React.FC = () => {
   const [lowStockProducts, setLowStockProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchDashboardData = async () => {
+  const fetchDashboardData = useCallback(async () => {
     try {
       setLoading(true);
 
@@ -48,20 +50,29 @@ export const GudangDashboard: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchDashboardData();
-  }, []);
+  }, [fetchDashboardData]);
+
+  // Langganan Realtime Supabase untuk Gudang
+  const { status: realtimeStatus } = useSupabaseRealtime({
+    tables: ['orders'],
+    onDataChange: fetchDashboardData,
+  });
 
   return (
     <div className="space-y-6">
       {/* Welcome Banner */}
       <div className="bg-gradient-to-r from-emerald-700 via-teal-700 to-emerald-800 rounded-3xl p-6 sm:p-8 text-white shadow-lg">
         <div className="max-w-3xl">
-          <span className="px-3 py-1 rounded-full text-xs font-semibold bg-white/20 backdrop-blur-xs text-emerald-100 inline-block mb-3">
-            Dashboard Operasional Gudang
-          </span>
+          <div className="flex flex-wrap items-center gap-2 mb-3">
+            <span className="px-3 py-1 rounded-full text-xs font-semibold bg-white/20 backdrop-blur-xs text-emerald-100 inline-block">
+              Dashboard Operasional Gudang
+            </span>
+            <RealtimeBadge status={realtimeStatus} />
+          </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
             Halo, {profile?.nama || 'Tim Gudang'}!
           </h1>

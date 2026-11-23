@@ -30,6 +30,7 @@ import {
   saveFinalRoutes,
 } from '../../services/routingService';
 import { RouteMap, ROUTE_COLORS } from '../../components/RouteMap';
+import { exportSuratJalanPdf } from '../../services/exportService';
 
 export const RoutingPage: React.FC = () => {
   // Master & Raw Data
@@ -393,6 +394,31 @@ export const RoutingPage: React.FC = () => {
     }
   };
 
+  const handleDownloadSuratJalan = async (route: EditableRoute, index: number) => {
+    const veh = vehicles.find((v) => v.id === route.vehicleId);
+    const drv = drivers.find((d) => d.id === route.driverId);
+    await exportSuratJalanPdf(
+      {
+        routeId: route.tempId,
+        tanggal: deliveryDate,
+        platKendaraan: veh?.plat || 'No Plat',
+        namaKendaraan: veh?.nama || `Armada #${index + 1}`,
+        namaDriver: drv?.nama || 'Driver CV SP',
+        totalJarakKm: route.totalJarakKm,
+        totalMuatanKg: route.totalMuatanKg,
+        stops: route.stops.map((s) => ({
+          urutan: s.urutan,
+          namaToko: s.namaToko,
+          alamat: s.alamat,
+          noHp: '',
+          totalMuatanKg: s.muatanKg,
+          items: [{ namaProduk: 'Produk Plastik', qty: 1, beratKg: s.muatanKg }],
+        })),
+      },
+      appSettings?.depot_nama || 'CV Saripan Plastik'
+    );
+  };
+
   // Metrik Kumulatif Keseluruhan Rute
   const totalCumulative = useMemo(() => {
     return routes.reduce(
@@ -690,6 +716,15 @@ export const RoutingPage: React.FC = () => {
                         >
                           {r.totalMuatanKg} / {r.kapasitasMaksKg} kg
                         </span>
+                        <button
+                          type="button"
+                          onClick={() => handleDownloadSuratJalan(r, rIdx)}
+                          className="p-1 px-2 rounded bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 transition flex items-center gap-1 font-sans font-semibold text-[11px]"
+                          title="Unduh Surat Jalan PDF"
+                        >
+                          <FileText className="w-3.5 h-3.5 text-blue-600" />
+                          <span>PDF</span>
+                        </button>
                       </div>
                     </div>
 

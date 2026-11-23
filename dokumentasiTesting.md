@@ -16,6 +16,7 @@
    - 2.4. Uji Logika Validasi & Batasan Pesanan
    - 2.5. Uji Penyesuaian Rute & Metrik Biaya (Fase 5)
    - 2.6. Uji Utilitas Driver, Deep-Link Maps, Format WA, & Kompresi Foto (Fase 6)
+   - 2.7. Uji Evaluasi Efisiensi Rute, Pembagi Nol, Format Rupiah & Zona WIB (Fase 7)
 3. [Pengujian Keamanan Database & Row Level Security (RLS)](#3-pengujian-keamanan-database--row-level-security-rls)
    - 3.1. Metodologi Pengujian Hak Akses Nyata (Anon Key)
    - 3.2. Matriks Pengujian Hak Akses per Peran (Admin, Gudang, Driver)
@@ -31,10 +32,10 @@ Pengujian perangkat lunak dilakukan secara komprehensif pada lapisan **algoritma
 
 | Kategori Pengujian | Target Cakupan | Jumlah Uji | Status |
 |---|---|:---:|:---:|
-| **Unit Testing (Vitest)** | Algoritma Clarke-Wright, Haversine, CVRP Constraints, Bab 4 Math Proof, Rute, Utilitas Driver & Foto | 34 Skenario | **100% LULUS (PASS)** |
-| **Security & RLS Testing** | Hak Akses Role (Admin, Gudang, Driver), RLS Policy, Trigger Penjaga, Storage Bucket | 20 Skenario | **100% LULUS (PASS)** |
-| **Production Build Test** | TypeScript Typecheck (`tsc -b`) & Vite Bundler Packaging | 1 Suite | **100% LULUS (PASS)** |
-| **Total Pengujian** | Seluruh Komponen Sistem Fase 1 s/d Fase 6 | **55 Uji** | **100% LULUS (PASS)** |
+| **Unit Testing (Vitest)** | Algoritma Clarke-Wright, Haversine, CVRP Constraints, Bab 4 Math Proof, Rute, Utilitas Driver, Evaluasi Rute | 44 Skenario | **100% LULUS (PASS)** |
+| **Security & RLS Testing** | Hak Akses Role (Admin, Gudang, Driver), RLS Policy, Trigger Penjaga, Storage Bucket, Conventional Routes | 23 Skenario | **100% LULUS (PASS)** |
+| **Production Build Test** | TypeScript Typecheck (`tsc -b`) & Vite Bundler Packaging (Code-Splitting) | 1 Suite | **100% LULUS (PASS)** |
+| **Total Pengujian** | Seluruh Komponen Sistem Fase 1 s/d Fase 7 (Lengkap) | **68 Uji** | **100% LULUS (PASS)** |
 
 ---
 
@@ -126,6 +127,16 @@ Menguji fungsi utilitas khusus alur lapangan driver:
    - Deteksi akurat kanvas putih bersih sebagai kanvas kosong (belum ditandatangani) $\to$ **PASS**
    - Deteksi akurat kanvas yang memiliki goresan pixel tanda tangan valid $\to$ **PASS**
 
+### 2.7. Uji Evaluasi Efisiensi Rute, Pembagi Nol, Format Rupiah & Zona WIB (`evaluationLogic.test.ts`)
+Menguji fungsi evaluasi komparatif Bab 4 dan formatters:
+1. **Jarak Rute Konvensional**: Menghitung jarak bolak-balik depot -> pelanggan berurutan -> depot secara tepat $\to$ **PASS**
+2. **Perhitungan Efisiensi Normal**: Penghematan jarak dan selisih biaya BBM bernilai positif $\to$ **PASS**
+3. **Penanganan Kasus Pembagi Nol**: Jika jarak konvensional $0\text{ km}$, persentase penghematan menghasilkan nilai `null` dan format visual `"-"` tanpa menimbulkan `NaN` atau `Infinity` $\to$ **PASS**
+4. **Penanganan Efisiensi Negatif**: Jika rute konvensional kebetulan lebih pendek, persentase negatif ditampilkan apa adanya (misal `-16.67% (Konvensional Lebih Pendek)`) tanpa dipaksa menjadi 0 $\to$ **PASS**
+5. **Jarak Identik**: Persentase menghasilkan `0.00% (Sama)` $\to$ **PASS**
+6. **Format Mata Uang Rupiah**: Format standar `id-ID` (contoh: `Rp 154.000`) $\to$ **PASS**
+7. **Filter Rentang Tanggal WIB**: Menjamin konversi ISO string ke zona waktu Indonesia Barat (UTC+7) akurat tanpa pergeseran hari/jam $\to$ **PASS**
+
 ---
 
 ## 3. Pengujian Keamanan Database & Row Level Security (RLS)
@@ -143,24 +154,27 @@ Berikut hasil eksekusi pengujian `npm run test:rls`:
 |:--:|:---:|---|:---:|:---:|:---:|
 | 1 | **ADMIN** | Membaca master pelanggan (`customers`) | Diizinkan (SUCCESS) | Berhasil dibaca | **PASS** |
 | 2 | **ADMIN** | Memperbarui pengaturan sistem (`app_settings`) | Diizinkan (SUCCESS) | Berhasil diperbarui | **PASS** |
-| 3 | **GUDANG** | Membaca pengaturan sistem (`app_settings`) | Diizinkan (SUCCESS) | Berhasil dibaca | **PASS** |
-| 4 | **GUDANG** | Mengubah pengaturan sistem (`app_settings`) | **Ditolak (REJECT)** | Ditolak oleh RLS Policy | **PASS** |
-| 5 | **GUDANG** | Menghapus data pesanan (`orders`) | **Ditolak (REJECT)** | Ditolak (pesanan utuh) | **PASS** |
-| 6 | **GUDANG** | Mengubah kolom terlarang (cth: `total_muatan_kg`) | **Ditolak (REJECT)** | Ditolak Trigger Penjaga | **PASS** |
-| 7 | **GUDANG** | Mengubah status pesanan ke `'dalam_pengiriman'` | **Ditolak (REJECT)** | Ditolak Trigger/RLS | **PASS** |
-| 8 | **GUDANG** | Mengubah status pesanan ke `'diterima'` | **Ditolak (REJECT)** | Ditolak Trigger/RLS | **PASS** |
-| 9 | **GUDANG** | Mengubah status pesanan ke `'siap'` | Diizinkan (SUCCESS) | Status berubah ke 'siap' | **PASS** |
-| 10 | **DRIVER** | Membaca pengaturan sistem (`app_settings`) | Diizinkan (SUCCESS) | Berhasil dibaca | **PASS** |
-| 11 | **DRIVER** | Mengubah pengaturan sistem (`app_settings`) | **Ditolak (REJECT)** | Ditolak oleh RLS Policy | **PASS** |
-| 12 | **DRIVER** | Melakukan update langsung ke tabel `orders` | **Ditolak (REJECT)** | Ditolak oleh RLS Policy | **PASS** |
-| 13 | **DRIVER** | Membaca rute pengiriman milik driver lain | **Ditolak (REJECT)** | Mengembalikan 0 baris | **PASS** |
-| 14 | **DRIVER** | Insert konfirmasi untuk pesanan di rute driver lain | **Ditolak (REJECT)** | Ditolak Policy RLS | **PASS** |
-| 15 | **DRIVER** | Insert konfirmasi untuk pesanan di rutenya sendiri | Diizinkan (SUCCESS) | Bukti berhasil tersimpan | **PASS** |
-| 16 | **TRIGGER** | Otomatisasi status `orders` $\to$ `'diterima'` via trigger | Diizinkan (SUCCESS) | Status order berubah otomatis | **PASS** |
-| 17 | **DRIVER** | Insert konfirmasi ganda (*duplicate order_id*) | **Ditolak (REJECT)** | Ditolak UNIQUE constraint / PK | **PASS** |
-| 18 | **DRIVER** | Insert konfirmasi dengan status `'tidak_lengkap'` | Diizinkan (SUCCESS) | Berhasil tersimpan | **PASS** |
-| 19 | **TRIGGER** | Otomatisasi status `orders` $\to$ `'tidak_lengkap'` via trigger | Diizinkan (SUCCESS) | Status order menjadi 'tidak_lengkap' | **PASS** |
-| 20 | **STORAGE** | Driver unggah berkas bukti ke folder rute sendiri | Diizinkan (SUCCESS) | Berhasil diunggah ke bucket 'proofs' | **PASS** |
+| 3 | **ADMIN** | Membaca riwayat evaluasi (`conventional_routes`) | Diizinkan (SUCCESS) | Berhasil dibaca | **PASS** |
+| 4 | **GUDANG** | Membaca pengaturan sistem (`app_settings`) | Diizinkan (SUCCESS) | Berhasil dibaca | **PASS** |
+| 5 | **GUDANG** | Mengubah pengaturan sistem (`app_settings`) | **Ditolak (REJECT)** | Ditolak oleh RLS Policy | **PASS** |
+| 6 | **GUDANG** | Menghapus data pesanan (`orders`) | **Ditolak (REJECT)** | Ditolak (pesanan utuh) | **PASS** |
+| 7 | **GUDANG** | Mengubah kolom terlarang (cth: `total_muatan_kg`) | **Ditolak (REJECT)** | Ditolak Trigger Penjaga | **PASS** |
+| 8 | **GUDANG** | Mengubah status pesanan ke `'dalam_pengiriman'` | **Ditolak (REJECT)** | Ditolak Trigger/RLS | **PASS** |
+| 9 | **GUDANG** | Mengubah status pesanan ke `'diterima'` | **Ditolak (REJECT)** | Ditolak Trigger/RLS | **PASS** |
+| 10 | **GUDANG** | Mengubah status pesanan ke `'siap'` | Diizinkan (SUCCESS) | Status berubah ke 'siap' | **PASS** |
+| 11 | **GUDANG** | Membaca riwayat evaluasi (`conventional_routes`) | **Ditolak (REJECT)** | Mengembalikan 0 baris | **PASS** |
+| 12 | **DRIVER** | Membaca pengaturan sistem (`app_settings`) | Diizinkan (SUCCESS) | Berhasil dibaca | **PASS** |
+| 13 | **DRIVER** | Mengubah pengaturan sistem (`app_settings`) | **Ditolak (REJECT)** | Ditolak oleh RLS Policy | **PASS** |
+| 14 | **DRIVER** | Melakukan update langsung ke tabel `orders` | **Ditolak (REJECT)** | Ditolak oleh RLS Policy | **PASS** |
+| 15 | **DRIVER** | Membaca rute pengiriman milik driver lain | **Ditolak (REJECT)** | Mengembalikan 0 baris | **PASS** |
+| 16 | **DRIVER** | Membaca riwayat evaluasi (`conventional_routes`) | **Ditolak (REJECT)** | Mengembalikan 0 baris | **PASS** |
+| 17 | **DRIVER** | Insert konfirmasi untuk pesanan di rute driver lain | **Ditolak (REJECT)** | Ditolak Policy RLS | **PASS** |
+| 18 | **DRIVER** | Insert konfirmasi untuk pesanan di rutenya sendiri | Diizinkan (SUCCESS) | Bukti berhasil tersimpan | **PASS** |
+| 19 | **TRIGGER** | Otomatisasi status `orders` $\to$ `'diterima'` via trigger | Diizinkan (SUCCESS) | Status order berubah otomatis | **PASS** |
+| 20 | **DRIVER** | Insert konfirmasi ganda (*duplicate order_id*) | **Ditolak (REJECT)** | Ditolak UNIQUE constraint / PK | **PASS** |
+| 21 | **DRIVER** | Insert konfirmasi dengan status `'tidak_lengkap'` | Diizinkan (SUCCESS) | Berhasil tersimpan | **PASS** |
+| 22 | **TRIGGER** | Otomatisasi status `orders` $\to$ `'tidak_lengkap'` via trigger | Diizinkan (SUCCESS) | Status order menjadi 'tidak_lengkap' | **PASS** |
+| 23 | **STORAGE** | Driver unggah berkas bukti ke folder rute sendiri | Diizinkan (SUCCESS) | Berhasil diunggah ke bucket 'proofs' | **PASS** |
 
 ### 3.3. Uji Keandalan Database Trigger Penjaga
 - **Trigger `trg_check_gudang_order_update`**: Berhasil membatasi staf gudang agar hanya bisa menyunting status pesanan ke `baru`, `belum_siap`, atau `siap`. Upaya mengubah kolom data inti lainnya (kuantitas, pelanggan, tanggal, muatan) digagalkan langsung oleh mesin database PostgreSQL.
@@ -181,13 +195,20 @@ transforming...
 ✓ 2253 modules transformed.
 rendering chunks...
 computing gzip size...
-dist/index.html                   0.45 kB │ gzip:   0.29 kB
-dist/assets/index-CXiH6rBc.css   60.87 kB │ gzip:  14.61 kB
-dist/assets/index-v92qk7fM.js   830.15 kB │ gzip: 228.36 kB
-✓ built in 830ms
+dist/index.html                                   0.45 kB │ gzip:   0.29 kB
+dist/assets/index-BDUt9u9T.css                   63.69 kB │ gzip:  15.12 kB
+dist/assets/purify.es-BQJV6A36.js                30.01 kB │ gzip:  11.98 kB
+dist/assets/jspdf.plugin.autotable-nHkpJTDV.js   30.11 kB │ gzip:   9.58 kB
+dist/assets/index.es-CIdNf4rC.js                151.41 kB │ gzip:  48.90 kB
+dist/assets/html2canvas-tcm2FgBJ.js             199.39 kB │ gzip:  46.73 kB
+dist/assets/jspdf.es.min-ka2eiAso.js            398.90 kB │ gzip: 129.60 kB
+dist/assets/xlsx-zHa97828.js                    423.63 kB │ gzip: 141.18 kB
+dist/assets/index-CVBHOj87.js                   876.18 kB │ gzip: 238.64 kB
+✓ built in 904ms
 ```
 
 - **Hasil**: Kompilasi TypeScript lulus 100% tanpa kesalahan (*0 errors*).
+- **Code-Splitting**: Pustaka ekspor berat (`jspdf`, `jspdf-autotable`, `xlsx`) berhasil dipisahkan ke dalam *chunk* dinamis terpisah secara otomatis, sehingga waktu muat halaman awal tetap optimal dan cepat.
 - **Kompatibilitas**: Seluruh modul mematuhi aturan ketat `verbatimModuleSyntax: true` dan Tailwind CSS v4.
 
 ---

@@ -11,6 +11,8 @@ import { ProductsPage } from './pages/admin/ProductsPage';
 import { VehiclesPage } from './pages/admin/VehiclesPage';
 import { SettingsPage } from './pages/admin/SettingsPage';
 import { RoutingPage } from './pages/admin/RoutingPage';
+import { EvaluationPage } from './pages/admin/EvaluationPage';
+import { ReportsPage } from './pages/admin/ReportsPage';
 import { GudangLayout } from './components/GudangLayout';
 import { GudangDashboard } from './pages/gudang/GudangDashboard';
 import { GudangStockPage } from './pages/gudang/GudangStockPage';
@@ -63,6 +65,8 @@ export function App() {
               <Route path="/admin/vehicles" element={<VehiclesPage />} />
               <Route path="/admin/settings" element={<SettingsPage />} />
               <Route path="/admin/routing" element={<RoutingPage />} />
+              <Route path="/admin/evaluation" element={<EvaluationPage />} />
+              <Route path="/admin/reports" element={<ReportsPage />} />
             </Route>
           </Route>
 

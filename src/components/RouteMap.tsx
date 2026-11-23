@@ -23,7 +23,7 @@ export const ROUTE_COLORS = [
 ];
 
 // Helper untuk membuat custom numbered marker pin pada peta
-function createNumberedIcon(num: number, color: string) {
+export function createNumberedIcon(num: number, color: string) {
   return L.divIcon({
     className: 'custom-route-marker',
     html: `

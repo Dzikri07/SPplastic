@@ -144,6 +144,10 @@ async function runRlsTests() {
       .eq('id', 1);
     recordResult('ADMIN', 'Mengubah tabel app_settings', 'SUCCESS', !adminSettingsUpdateErr ? 'SUCCESS' : 'REJECT');
 
+    // Admin: Membaca tabel conventional_routes (Boleh)
+    const { data: adminConv, error: adminConvErr } = await adminClient.from('conventional_routes').select('id').limit(1);
+    recordResult('ADMIN', 'Membaca tabel conventional_routes', 'SUCCESS', !adminConvErr ? 'SUCCESS' : 'REJECT');
+
     // ========================================================================
     // 2. PENGUJIAN ROLE: GUDANG
     // ========================================================================
@@ -201,6 +205,11 @@ async function runRlsTests() {
       .eq('id', FIXTURE_ORDER_A);
     recordResult('GUDANG', 'Ubah status ke "siap"', 'SUCCESS', !gudangToSiapErr ? 'SUCCESS' : 'REJECT');
 
+    // Gudang: Membaca tabel conventional_routes -> HARUS DITOLAK / KOSONG (0 baris)
+    const { data: gudangConvData } = await gudangClient.from('conventional_routes').select('id');
+    const gudangConvBlocked = !gudangConvData || gudangConvData.length === 0;
+    recordResult('GUDANG', 'Membaca tabel conventional_routes', 'REJECT', gudangConvBlocked ? 'REJECT' : 'SUCCESS', 'Ditolak RLS');
+
     // ========================================================================
     // 3. PENGUJIAN ROLE: DRIVER
     // ========================================================================
@@ -235,6 +244,11 @@ async function runRlsTests() {
     const { data: foreignRouteData } = await driverClient.from('routes').select('id').eq('id', FIXTURE_ROUTE_B);
     const foreignHidden = !foreignRouteData || foreignRouteData.length === 0;
     recordResult('DRIVER', 'Membaca rute milik driver lain', 'REJECT', foreignHidden ? 'REJECT' : 'SUCCESS', foreignHidden ? 'Rute lain tersembunyi' : 'BOCOR!');
+
+    // Driver: Membaca tabel conventional_routes -> HARUS DITOLAK / KOSONG (0 baris)
+    const { data: driverConvData } = await driverClient.from('conventional_routes').select('id');
+    const driverConvBlocked = !driverConvData || driverConvData.length === 0;
+    recordResult('DRIVER', 'Membaca tabel conventional_routes', 'REJECT', driverConvBlocked ? 'REJECT' : 'SUCCESS', 'Ditolak RLS');
 
     // Driver: INSERT delivery_confirmations untuk pesanan di rute driver lain -> HARUS DITOLAK
     const { error: foreignDeliveryInsertErr } = await driverClient.from('delivery_confirmations').insert({

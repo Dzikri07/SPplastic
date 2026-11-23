@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Users,
@@ -8,9 +8,13 @@ import {
   ShoppingCart,
   CheckCircle2,
   Route as RouteIcon,
+  BarChart3,
+  FileSpreadsheet,
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthContext';
+import { useSupabaseRealtime } from '../../hooks/useSupabaseRealtime';
+import { RealtimeBadge } from '../../components/RealtimeBadge';
 
 export const AdminDashboard: React.FC = () => {
   const { profile } = useAuth();
@@ -22,39 +26,48 @@ export const AdminDashboard: React.FC = () => {
 
   const todayStr = new Date().toISOString().split('T')[0];
 
-  useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        setLoading(true);
-        const [todayOrdersRes, readyOrdersRes, custRes, vehRes] = await Promise.all([
-          supabase.from('orders').select('id', { count: 'exact', head: true }).eq('tanggal', todayStr),
-          supabase.from('orders').select('id', { count: 'exact', head: true }).eq('status', 'siap'),
-          supabase.from('customers').select('id', { count: 'exact', head: true }),
-          supabase.from('vehicles').select('id', { count: 'exact', head: true }),
-        ]);
+  const fetchStats = useCallback(async () => {
+    try {
+      setLoading(true);
+      const [todayOrdersRes, readyOrdersRes, custRes, vehRes] = await Promise.all([
+        supabase.from('orders').select('id', { count: 'exact', head: true }).eq('tanggal', todayStr),
+        supabase.from('orders').select('id', { count: 'exact', head: true }).eq('status', 'siap'),
+        supabase.from('customers').select('id', { count: 'exact', head: true }),
+        supabase.from('vehicles').select('id', { count: 'exact', head: true }),
+      ]);
 
-        setOrdersTodayCount(todayOrdersRes.count || 0);
-        setReadyOrdersCount(readyOrdersRes.count || 0);
-        setCustomerCount(custRes.count || 0);
-        setVehicleCount(vehRes.count || 0);
-      } catch (err) {
-        console.error('Error fetching dashboard counts:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchStats();
+      setOrdersTodayCount(todayOrdersRes.count || 0);
+      setReadyOrdersCount(readyOrdersRes.count || 0);
+      setCustomerCount(custRes.count || 0);
+      setVehicleCount(vehRes.count || 0);
+    } catch (err) {
+      console.error('Error fetching dashboard counts:', err);
+    } finally {
+      setLoading(false);
+    }
   }, [todayStr]);
+
+  useEffect(() => {
+    fetchStats();
+  }, [fetchStats]);
+
+  // Langganan Realtime Supabase
+  const { status: realtimeStatus } = useSupabaseRealtime({
+    tables: ['orders', 'routes', 'delivery_confirmations'],
+    onDataChange: fetchStats,
+  });
 
   return (
     <div className="space-y-6">
       {/* Welcome Banner */}
       <div className="bg-gradient-to-r from-blue-700 via-indigo-700 to-blue-800 rounded-3xl p-6 sm:p-8 text-white shadow-lg">
         <div className="max-w-3xl">
-          <span className="px-3 py-1 rounded-full text-xs font-semibold bg-white/20 backdrop-blur-xs text-blue-100 inline-block mb-3">
-            Sistem Informasi Distribusi & Rute Optimal (CVRP)
-          </span>
+          <div className="flex flex-wrap items-center gap-2 mb-3">
+            <span className="px-3 py-1 rounded-full text-xs font-semibold bg-white/20 backdrop-blur-xs text-blue-100 inline-block">
+              Sistem Informasi Distribusi & Rute Optimal (CVRP)
+            </span>
+            <RealtimeBadge status={realtimeStatus} />
+          </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
             Selamat Datang, {profile?.nama || 'Administrator'}!
           </h1>
@@ -71,18 +84,25 @@ export const AdminDashboard: React.FC = () => {
               <span>Hitung Rute Optimal</span>
             </Link>
             <Link
+              to="/admin/evaluation"
+              className="px-4 py-2.5 bg-white/10 hover:bg-white/20 text-white font-medium rounded-xl text-xs sm:text-sm backdrop-blur-xs transition flex items-center gap-2"
+            >
+              <BarChart3 className="w-4 h-4" />
+              <span>Evaluasi Rute (Bab 4)</span>
+            </Link>
+            <Link
+              to="/admin/reports"
+              className="px-4 py-2.5 bg-white/10 hover:bg-white/20 text-white font-medium rounded-xl text-xs sm:text-sm backdrop-blur-xs transition flex items-center gap-2"
+            >
+              <FileSpreadsheet className="w-4 h-4" />
+              <span>Rekapitulasi Laporan</span>
+            </Link>
+            <Link
               to="/admin/orders"
               className="px-4 py-2.5 bg-white/10 hover:bg-white/20 text-white font-medium rounded-xl text-xs sm:text-sm backdrop-blur-xs transition flex items-center gap-2"
             >
               <ShoppingCart className="w-4 h-4" />
-              <span>Kelola Pesanan</span>
-            </Link>
-            <Link
-              to="/admin/customers"
-              className="px-4 py-2.5 bg-white/10 hover:bg-white/20 text-white font-medium rounded-xl text-xs sm:text-sm backdrop-blur-xs transition flex items-center gap-2"
-            >
-              <Users className="w-4 h-4" />
-              <span>Pelanggan & Peta</span>
+              <span>Pesanan</span>
             </Link>
           </div>
         </div>
@@ -197,14 +217,14 @@ export const AdminDashboard: React.FC = () => {
           Kesiapan modul sistem sesuai alur penelitian Kerja Praktek (KP):
         </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 mt-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
           <div className="p-4 bg-slate-50 rounded-xl border border-slate-200">
             <span className="text-xs font-bold text-emerald-700 bg-emerald-100 px-2.5 py-0.5 rounded-full">
               Fase 1 &bull; Selesai
             </span>
             <h4 className="font-semibold text-sm text-slate-900 mt-2">Algoritma Saving Matrix</h4>
             <p className="text-xs text-slate-600 mt-1">
-              Clarke-Wright CVRP & validasi manual.
+              Clarke-Wright CVRP & validasi matematis Bab 4.
             </p>
           </div>
 
@@ -214,7 +234,7 @@ export const AdminDashboard: React.FC = () => {
             </span>
             <h4 className="font-semibold text-sm text-slate-900 mt-2">Autentikasi & RLS</h4>
             <p className="text-xs text-slate-600 mt-1">
-              Role guard & trigger keamanan DB.
+              Role guard, trigger keamanan DB, & bucket proofs.
             </p>
           </div>
 
@@ -224,7 +244,7 @@ export const AdminDashboard: React.FC = () => {
             </span>
             <h4 className="font-semibold text-sm text-slate-900 mt-2">Master Data & Leaflet</h4>
             <p className="text-xs text-slate-600 mt-1">
-              Pelanggan, produk, armada, & depot.
+              Pelanggan toko, produk, armada, & depot Haurwangi.
             </p>
           </div>
 
@@ -234,17 +254,39 @@ export const AdminDashboard: React.FC = () => {
             </span>
             <h4 className="font-semibold text-sm text-slate-900 mt-2">Pesanan & Gudang</h4>
             <p className="text-xs text-slate-600 mt-1">
-              Order RPC & konfirmasi kesiapan.
+              Order RPC transaksional & konfirmasi kesiapan.
             </p>
           </div>
 
-          <div className="p-4 bg-blue-50/60 rounded-xl border border-blue-200">
-            <span className="text-xs font-bold text-blue-700 bg-blue-100 px-2.5 py-0.5 rounded-full">
-              Fase 5 &bull; Aktif
+          <div className="p-4 bg-slate-50 rounded-xl border border-slate-200">
+            <span className="text-xs font-bold text-emerald-700 bg-emerald-100 px-2.5 py-0.5 rounded-full">
+              Fase 5 &bull; Selesai
             </span>
             <h4 className="font-semibold text-sm text-slate-900 mt-2">Penentuan Rute Optimal</h4>
             <p className="text-xs text-slate-600 mt-1">
-              Saving Matrix, peta rute, swap stop, & simpan.
+              Peta rute multi-warna, swap stop, & simpan rute.
+            </p>
+          </div>
+
+          <div className="p-4 bg-slate-50 rounded-xl border border-slate-200">
+            <span className="text-xs font-bold text-emerald-700 bg-emerald-100 px-2.5 py-0.5 rounded-full">
+              Fase 6 &bull; Selesai
+            </span>
+            <h4 className="font-semibold text-sm text-slate-900 mt-2">Alur Driver & Bukti HP</h4>
+            <p className="text-xs text-slate-600 mt-1">
+              Navigasi Maps, kompresi foto &lt;200KB, & tanda tangan.
+            </p>
+          </div>
+
+          <div className="p-4 bg-emerald-50/80 rounded-xl border border-emerald-300 col-span-1 md:col-span-2">
+            <span className="text-xs font-bold text-emerald-800 bg-emerald-200/80 px-2.5 py-0.5 rounded-full">
+              Fase 7 &bull; Fase Akhir (Final)
+            </span>
+            <h4 className="font-semibold text-sm text-slate-900 mt-2">
+              Evaluasi Efisiensi, Laporan PDF/Excel, Realtime & Vercel
+            </h4>
+            <p className="text-xs text-slate-600 mt-1">
+              Komparasi konvensional vs Saving Matrix, surat jalan PDF, rekap Excel formula SUM, dan live subscription.
             </p>
           </div>
         </div>
