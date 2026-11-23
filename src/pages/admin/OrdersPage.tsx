@@ -1,0 +1,751 @@
+import React, { useEffect, useState } from 'react';
+import {
+  Plus,
+  Search,
+  Calendar,
+  Filter,
+  ShoppingCart,
+  Eye,
+  Edit2,
+  Trash2,
+  AlertTriangle,
+  CheckCircle2,
+  AlertCircle,
+  X,
+  Package,
+  Weight,
+  Lock,
+} from 'lucide-react';
+import { supabase } from '../../lib/supabase';
+import type { Order, Customer, Product, OrderStatus } from '../../types/database';
+import { fetchOrders, saveOrder, deleteOrder } from '../../services/orderService';
+import { ProofDetailModal } from '../../components/ProofDetailModal';
+
+export const OrdersPage: React.FC = () => {
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [maxVehicleCapacity, setMaxVehicleCapacity] = useState<number>(1000);
+
+  const [loading, setLoading] = useState(true);
+  const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [dateFilter, setDateFilter] = useState<string>('');
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const [successMsg, setSuccessMsg] = useState<string | null>(null);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  // Modal State
+  const [isFormModalOpen, setIsFormModalOpen] = useState(false);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [viewingProofOrderId, setViewingProofOrderId] = useState<{
+    orderId: string;
+    namaToko: string;
+  } | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingOrderId, setEditingOrderId] = useState<string | null>(null);
+
+  // Form Fields
+  const [formCustomerId, setFormCustomerId] = useState('');
+  const [formTanggal, setFormTanggal] = useState(new Date().toISOString().split('T')[0]);
+  const [formCatatan, setFormCatatan] = useState('');
+  const [formItems, setFormItems] = useState<Array<{ product_id: string; qty: number }>>([]);
+  const [formError, setFormError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Ambil data pesanan, pelanggan, produk, dan armada terbesar
+  const loadData = async () => {
+    try {
+      setLoading(true);
+      setErrorMsg(null);
+
+      const [ordersData, custRes, prodRes, vehRes] = await Promise.all([
+        fetchOrders({ status: statusFilter, tanggal: dateFilter || undefined }),
+        supabase.from('customers').select('*').order('nama_toko', { ascending: true }),
+        supabase.from('products').select('*').order('nama', { ascending: true }),
+        supabase.from('vehicles').select('kapasitas_kg').order('kapasitas_kg', { ascending: false }).limit(1),
+      ]);
+
+      setOrders(ordersData);
+      setCustomers(custRes.data || []);
+      setProducts(prodRes.data || []);
+      if (vehRes.data && vehRes.data.length > 0) {
+        setMaxVehicleCapacity(Number(vehRes.data[0].kapasitas_kg));
+      }
+    } catch (err: any) {
+      setErrorMsg(err.message || 'Gagal memuat data pesanan.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadData();
+  }, [statusFilter, dateFilter]);
+
+  // Buka Modal Tambah Pesanan
+  const openAddModal = () => {
+    setIsEditing(false);
+    setEditingOrderId(null);
+    setFormCustomerId(customers[0]?.id || '');
+    setFormTanggal(new Date().toISOString().split('T')[0]);
+    setFormCatatan('');
+    // Default 1 item baris pertama jika produk ada
+    if (products.length > 0) {
+      setFormItems([{ product_id: products[0].id, qty: 10 }]);
+    } else {
+      setFormItems([]);
+    }
+    setFormError(null);
+    setIsFormModalOpen(true);
+  };
+
+  // Buka Modal Edit Pesanan
+  const openEditModal = (order: Order) => {
+    if (['dalam_pengiriman', 'diterima', 'tidak_lengkap'].includes(order.status)) {
+      alert(`Pesanan dengan status "${order.status}" tidak dapat diedit karena rute pengiriman telah diproses.`);
+      return;
+    }
+
+    setIsEditing(true);
+    setEditingOrderId(order.id);
+    setFormCustomerId(order.customer_id);
+    setFormTanggal(order.tanggal);
+    setFormCatatan(order.catatan || '');
+    const mappedItems = (order.order_items || []).map((it) => ({
+      product_id: it.product_id,
+      qty: it.qty,
+    }));
+    setFormItems(mappedItems.length > 0 ? mappedItems : [{ product_id: products[0]?.id || '', qty: 10 }]);
+    setFormError(null);
+    setIsFormModalOpen(true);
+  };
+
+  // Buka Detail Modal
+  const openDetailModal = (order: Order) => {
+    setSelectedOrder(order);
+    setIsDetailModalOpen(true);
+  };
+
+  // Manipulasi baris item
+  const handleAddItemRow = () => {
+    if (products.length === 0) return;
+    setFormItems([...formItems, { product_id: products[0].id, qty: 10 }]);
+  };
+
+  const handleRemoveItemRow = (index: number) => {
+    if (formItems.length === 1) {
+      alert('Pesanan harus memiliki minimal satu item produk.');
+      return;
+    }
+    setFormItems(formItems.filter((_, idx) => idx !== index));
+  };
+
+  const handleItemChange = (index: number, field: 'product_id' | 'qty', value: any) => {
+    const updated = [...formItems];
+    updated[index] = { ...updated[index], [field]: value };
+    setFormItems(updated);
+  };
+
+  // Perhitungan total muatan estimasi di client (sebelum divalidasi dan dihitung ulang di server)
+  const calculatedClientPayload = formItems.reduce((sum, item) => {
+    const p = products.find((prod) => prod.id === item.product_id);
+    const weight = p ? p.berat_per_unit_kg * (item.qty || 0) : 0;
+    return sum + weight;
+  }, 0);
+
+  // Submit Simpan Pesanan via RPC
+  const handleSubmitOrder = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setFormError(null);
+
+    if (!formCustomerId) {
+      setFormError('Harap pilih pelanggan pemesan.');
+      return;
+    }
+
+    if (formItems.length === 0) {
+      setFormError('Pesanan harus memiliki minimal satu item produk.');
+      return;
+    }
+
+    for (const item of formItems) {
+      if (!item.product_id || isNaN(item.qty) || item.qty <= 0) {
+        setFormError('Setiap item produk harus memiliki kuantitas (qty) > 0.');
+        return;
+      }
+    }
+
+    try {
+      setIsSubmitting(true);
+      await saveOrder({
+        orderId: isEditing ? editingOrderId : null,
+        customerId: formCustomerId,
+        tanggal: formTanggal,
+        catatan: formCatatan,
+        items: formItems,
+      });
+
+      setSuccessMsg(isEditing ? 'Pesanan berhasil diperbarui.' : 'Pesanan baru berhasil dibuat.');
+      setIsFormModalOpen(false);
+      loadData();
+      setTimeout(() => setSuccessMsg(null), 4000);
+    } catch (err: any) {
+      setFormError(err.message || 'Gagal menyimpan pesanan.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // Hapus Pesanan via RPC
+  const handleDeleteOrder = async (order: Order) => {
+    if (['dalam_pengiriman', 'diterima', 'tidak_lengkap'].includes(order.status)) {
+      alert(`Pesanan dengan status "${order.status}" tidak dapat dihapus karena sudah dalam pengiriman atau selesai.`);
+      return;
+    }
+
+    if (!window.confirm(`Yakin ingin menghapus pesanan toko "${order.customers?.nama_toko || 'Pelanggan'}"?`)) {
+      return;
+    }
+
+    try {
+      await deleteOrder(order.id);
+      setSuccessMsg('Pesanan berhasil dihapus.');
+      setOrders(orders.filter((o) => o.id !== order.id));
+      setTimeout(() => setSuccessMsg(null), 4000);
+    } catch (err: any) {
+      alert(`Gagal menghapus pesanan: ${err.message}`);
+    }
+  };
+
+  // Helper Badge Status
+  const getStatusBadge = (status: OrderStatus) => {
+    switch (status) {
+      case 'baru':
+        return <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-800">Baru</span>;
+      case 'belum_siap':
+        return <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-800">Belum Siap</span>;
+      case 'siap':
+        return <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800">Siap Kirim</span>;
+      case 'dalam_pengiriman':
+        return <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-purple-100 text-purple-800">Dalam Pengiriman</span>;
+      case 'diterima':
+        return <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-teal-100 text-teal-800">Diterima</span>;
+      case 'tidak_lengkap':
+        return <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-100 text-red-800">Tidak Lengkap</span>;
+      default:
+        return <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-800">{status}</span>;
+    }
+  };
+
+  const filteredOrders = orders.filter((o) => {
+    const tokoName = o.customers?.nama_toko || '';
+    return tokoName.toLowerCase().includes(searchQuery.toLowerCase());
+  });
+
+  return (
+    <div className="space-y-6">
+      {/* Page Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900">Manajemen Pesanan Distribusi</h1>
+          <p className="text-sm text-slate-500 mt-0.5">
+            Daftar pesanan produk plastik pelanggan beserta muatan beban (kg) untuk penentuan rute.
+          </p>
+        </div>
+
+        <button
+          onClick={openAddModal}
+          className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl shadow-sm hover:shadow transition"
+        >
+          <Plus className="w-4 h-4" />
+          <span>Buat Pesanan Baru</span>
+        </button>
+      </div>
+
+      {/* Notifications */}
+      {successMsg && (
+        <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center gap-3 text-sm text-emerald-800">
+          <CheckCircle2 className="w-5 h-5 flex-shrink-0 text-emerald-600" />
+          <span>{successMsg}</span>
+        </div>
+      )}
+
+      {errorMsg && (
+        <div className="p-4 bg-red-50 border border-red-200 rounded-xl flex items-center gap-3 text-sm text-red-800">
+          <AlertCircle className="w-5 h-5 flex-shrink-0 text-red-600" />
+          <span>{errorMsg}</span>
+        </div>
+      )}
+
+      {/* Filter Bar */}
+      <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs flex flex-col md:flex-row justify-between items-center gap-4">
+        <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
+          {/* Search Toko */}
+          <div className="relative w-full sm:w-64">
+            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Cari toko pelanggan..."
+              className="w-full pl-9 pr-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white transition"
+            />
+          </div>
+
+          {/* Filter Status */}
+          <div className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5">
+            <Filter className="w-3.5 h-3.5 text-slate-400" />
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="bg-transparent text-xs font-medium text-slate-700 focus:outline-none"
+            >
+              <option value="all">Semua Status</option>
+              <option value="baru">Baru</option>
+              <option value="belum_siap">Belum Siap</option>
+              <option value="siap">Siap Kirim</option>
+              <option value="dalam_pengiriman">Dalam Pengiriman</option>
+              <option value="diterima">Diterima</option>
+              <option value="tidak_lengkap">Tidak Lengkap</option>
+            </select>
+          </div>
+
+          {/* Filter Tanggal */}
+          <div className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5">
+            <Calendar className="w-3.5 h-3.5 text-slate-400" />
+            <input
+              type="date"
+              value={dateFilter}
+              onChange={(e) => setDateFilter(e.target.value)}
+              className="bg-transparent text-xs font-medium text-slate-700 focus:outline-none"
+            />
+            {dateFilter && (
+              <button
+                onClick={() => setDateFilter('')}
+                title="Hapus filter tanggal"
+                className="text-slate-400 hover:text-slate-600 ml-1 text-xs"
+              >
+                &times;
+              </button>
+            )}
+          </div>
+        </div>
+
+        <div className="text-xs text-slate-500 font-medium whitespace-nowrap">
+          Ditemukan: <span className="font-bold text-slate-800">{filteredOrders.length}</span> pesanan
+        </div>
+      </div>
+
+      {/* Orders Table */}
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
+        {loading ? (
+          <div className="p-12 text-center text-slate-500 flex flex-col items-center gap-3">
+            <div className="w-8 h-8 border-3 border-blue-600 border-t-transparent rounded-full animate-spin" />
+            <p className="text-sm">Memuat pesanan...</p>
+          </div>
+        ) : filteredOrders.length === 0 ? (
+          <div className="p-12 text-center text-slate-500">
+            <ShoppingCart className="w-12 h-12 text-slate-300 mx-auto mb-3" />
+            <p className="font-semibold text-slate-700">Tidak ada pesanan yang sesuai filter</p>
+            <p className="text-xs text-slate-400 mt-1">
+              Buat pesanan baru untuk mulai mengalokasikan stok produk dan rute armada.
+            </p>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-sm text-slate-600">
+              <thead className="bg-slate-50 text-slate-700 text-xs font-semibold uppercase tracking-wider border-b border-slate-200">
+                <tr>
+                  <th className="py-3.5 px-4">Tanggal</th>
+                  <th className="py-3.5 px-4">Toko Pelanggan</th>
+                  <th className="py-3.5 px-4 text-center">Status</th>
+                  <th className="py-3.5 px-4">Item & Muatan (kg)</th>
+                  <th className="py-3.5 px-4">Catatan</th>
+                  <th className="py-3.5 px-4 text-right">Aksi</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {filteredOrders.map((o) => {
+                  const isLocked = ['dalam_pengiriman', 'diterima', 'tidak_lengkap'].includes(o.status);
+                  const itemCount = (o.order_items || []).length;
+
+                  return (
+                    <tr key={o.id} className="hover:bg-slate-50/80 transition">
+                      <td className="py-3.5 px-4 font-mono text-xs text-slate-700 whitespace-nowrap">
+                        {o.tanggal}
+                      </td>
+                      <td className="py-3.5 px-4">
+                        <div className="font-semibold text-slate-900">
+                          {o.customers?.nama_toko || 'Toko Pelanggan'}
+                        </div>
+                        <div className="text-[11px] text-slate-500 truncate max-w-xs">
+                          {o.customers?.alamat}
+                        </div>
+                      </td>
+                      <td className="py-3.5 px-4 text-center">
+                        {getStatusBadge(o.status)}
+                      </td>
+                      <td className="py-3.5 px-4">
+                        <div className="flex items-center gap-2">
+                          <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 bg-slate-100 text-slate-700 rounded-md">
+                            <Package className="w-3 h-3 text-slate-500" />
+                            {itemCount} item
+                          </span>
+                          <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 bg-blue-50 text-blue-700 rounded-md">
+                            <Weight className="w-3 h-3 text-blue-600" />
+                            {Number(o.total_muatan_kg).toFixed(1)} kg
+                          </span>
+                        </div>
+                      </td>
+                      <td className="py-3.5 px-4 text-xs text-slate-500 max-w-xs truncate">
+                        {o.catatan || '-'}
+                      </td>
+                      <td className="py-3.5 px-4 text-right">
+                        <div className="inline-flex items-center gap-1">
+                          <button
+                            onClick={() => openDetailModal(o)}
+                            title="Lihat Detail Pesanan"
+                            className="p-1.5 text-slate-600 hover:bg-slate-100 rounded-lg transition"
+                          >
+                            <Eye className="w-4 h-4" />
+                          </button>
+                          {isLocked ? (
+                            <span
+                              title="Terkunci: Pesanan sedang dikirim atau selesai"
+                              className="p-1.5 text-slate-300 cursor-not-allowed"
+                            >
+                              <Lock className="w-4 h-4" />
+                            </span>
+                          ) : (
+                            <>
+                              <button
+                                onClick={() => openEditModal(o)}
+                                title="Edit Pesanan"
+                                className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition"
+                              >
+                                <Edit2 className="w-4 h-4" />
+                              </button>
+                              <button
+                                onClick={() => handleDeleteOrder(o)}
+                                title="Hapus Pesanan"
+                                className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+
+      {/* Modal 1: Form Tambah / Edit Pesanan */}
+      {isFormModalOpen && (
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-xl border border-slate-200 max-w-2xl w-full overflow-hidden animate-scaleIn">
+            <div className="flex justify-between items-center px-6 py-4 border-b border-slate-200">
+              <h2 className="text-base font-bold text-slate-900">
+                {isEditing ? 'Ubah Pesanan' : 'Buat Pesanan Distribusi Baru'}
+              </h2>
+              <button
+                onClick={() => setIsFormModalOpen(false)}
+                className="p-1.5 text-slate-400 hover:text-slate-700 rounded-lg transition"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSubmitOrder} className="p-6 space-y-4">
+              {formError && (
+                <div className="p-3.5 bg-red-50 border border-red-200 rounded-xl text-xs text-red-700 flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4 flex-shrink-0 text-red-600" />
+                  <span>{formError}</span>
+                </div>
+              )}
+
+              {/* Warning jika kapasitas melebihi armada terbesar */}
+              {calculatedClientPayload > maxVehicleCapacity && (
+                <div className="p-3.5 bg-amber-50 border border-amber-300 rounded-xl text-xs text-amber-800 flex items-start gap-2.5">
+                  <AlertTriangle className="w-4 h-4 flex-shrink-0 text-amber-600 mt-0.5" />
+                  <div>
+                    <span className="font-bold">Peringatan Kapasitas Armada:</span> Total muatan pesanan ini ({calculatedClientPayload.toFixed(1)} kg) melebihi kapasitas kendaraan terbesar yang tersedia ({maxVehicleCapacity} kg).
+                  </div>
+                </div>
+              )}
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {/* Pelanggan */}
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                    Toko Pelanggan *
+                  </label>
+                  <select
+                    value={formCustomerId}
+                    onChange={(e) => setFormCustomerId(e.target.value)}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white transition"
+                    required
+                  >
+                    {customers.map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.nama_toko} ({c.alamat})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Tanggal */}
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                    Tanggal Pengiriman *
+                  </label>
+                  <input
+                    type="date"
+                    value={formTanggal}
+                    onChange={(e) => setFormTanggal(e.target.value)}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white transition"
+                    required
+                  />
+                </div>
+              </div>
+
+              {/* Catatan */}
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                  Catatan Pengiriman (Opsional)
+                </label>
+                <input
+                  type="text"
+                  value={formCatatan}
+                  onChange={(e) => setFormCatatan(e.target.value)}
+                  placeholder="Contoh: Titipkan di kasir utama..."
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white transition"
+                />
+              </div>
+
+              {/* Dynamic Items List */}
+              <div className="space-y-3 pt-2">
+                <div className="flex justify-between items-center">
+                  <label className="text-xs font-semibold text-slate-700 uppercase tracking-wider">
+                    Daftar Item Produk Plastik
+                  </label>
+                  <button
+                    type="button"
+                    onClick={handleAddItemRow}
+                    className="flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-700 transition"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    <span>Tambah Baris Produk</span>
+                  </button>
+                </div>
+
+                <div className="space-y-2 max-h-60 overflow-y-auto pr-1">
+                  {formItems.map((item, index) => {
+                    const prod = products.find((p) => p.id === item.product_id);
+                    const isOverStock = prod && item.qty > prod.stok;
+                    const itemWeight = prod ? (prod.berat_per_unit_kg * item.qty).toFixed(1) : '0';
+
+                    return (
+                      <div key={index} className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+                        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
+                          {/* Pilih Produk */}
+                          <div className="flex-1 w-full sm:w-auto">
+                            <select
+                              value={item.product_id}
+                              onChange={(e) => handleItemChange(index, 'product_id', e.target.value)}
+                              className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs font-medium text-slate-800 focus:ring-2 focus:ring-blue-600"
+                            >
+                              {products.map((p) => (
+                                <option key={p.id} value={p.id}>
+                                  {p.nama} ({p.berat_per_unit_kg} kg/unit, stok: {p.stok})
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+
+                          {/* Qty Input */}
+                          <div className="flex items-center gap-2 w-full sm:w-auto justify-between">
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-xs text-slate-500">Qty:</span>
+                              <input
+                                type="number"
+                                min="1"
+                                step="1"
+                                value={item.qty}
+                                onChange={(e) => handleItemChange(index, 'qty', parseInt(e.target.value) || 0)}
+                                className="w-20 px-2 py-1 bg-white border border-slate-300 rounded-lg text-xs font-semibold text-center"
+                                required
+                              />
+                            </div>
+
+                            {/* Subtotal Berat */}
+                            <span className="text-xs font-mono font-medium text-slate-600 whitespace-nowrap">
+                              = {itemWeight} kg
+                            </span>
+
+                            {/* Tombol Hapus Baris */}
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveItemRow(index)}
+                              className="p-1 text-slate-400 hover:text-red-600 transition"
+                              title="Hapus item"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Peringatan Stok Menipis/Kurang */}
+                        {isOverStock && (
+                          <div className="text-[11px] text-amber-700 bg-amber-100/70 px-2 py-1 rounded-md flex items-center gap-1">
+                            <AlertTriangle className="w-3 h-3 text-amber-600 flex-shrink-0" />
+                            <span>Kuantitas ({item.qty}) melebihi stok yang tersedia saat ini ({prod?.stok} unit).</span>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Total Muatan Summary Box */}
+              <div className="p-3.5 bg-blue-50/70 border border-blue-200 rounded-xl flex items-center justify-between text-xs">
+                <span className="font-semibold text-blue-900">Total Muatan Dihitung:</span>
+                <span className="font-bold text-sm text-blue-700 font-mono">
+                  {calculatedClientPayload.toFixed(2)} kg
+                </span>
+              </div>
+
+              {/* Actions */}
+              <div className="pt-4 border-t border-slate-200 flex justify-end gap-2.5">
+                <button
+                  type="button"
+                  onClick={() => setIsFormModalOpen(false)}
+                  className="px-4 py-2 border border-slate-300 text-slate-700 hover:bg-slate-50 font-medium rounded-xl text-sm transition"
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl shadow-sm text-sm transition disabled:opacity-50"
+                >
+                  {isSubmitting ? 'Memproses di Server...' : isEditing ? 'Simpan Perubahan' : 'Buat Pesanan'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal 2: Detail Pesanan */}
+      {isDetailModalOpen && selectedOrder && (
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-xl border border-slate-200 max-w-lg w-full overflow-hidden animate-scaleIn">
+            <div className="flex justify-between items-center px-6 py-4 border-b border-slate-200">
+              <div>
+                <h2 className="text-base font-bold text-slate-900">
+                  Detail Pesanan #{selectedOrder.id.slice(0, 8)}
+                </h2>
+                <p className="text-xs text-slate-500">Tanggal: {selectedOrder.tanggal}</p>
+              </div>
+              <button
+                onClick={() => setIsDetailModalOpen(false)}
+                className="p-1.5 text-slate-400 hover:text-slate-700 rounded-lg transition"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-4">
+              {/* Info Pelanggan */}
+              <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Pelanggan</p>
+                <p className="font-bold text-slate-900 text-sm mt-0.5">{selectedOrder.customers?.nama_toko}</p>
+                <p className="text-xs text-slate-600 mt-0.5">{selectedOrder.customers?.alamat}</p>
+                <p className="text-xs text-slate-500 mt-0.5">Kontak: {selectedOrder.customers?.no_hp}</p>
+              </div>
+
+              {/* Status & Catatan */}
+              <div className="flex items-center justify-between text-xs">
+                <span className="font-medium text-slate-600">Status Saat Ini:</span>
+                {getStatusBadge(selectedOrder.status)}
+              </div>
+              {selectedOrder.catatan && (
+                <div className="text-xs text-slate-600 p-2.5 bg-slate-100 rounded-lg">
+                  <span className="font-semibold text-slate-700">Catatan:</span> {selectedOrder.catatan}
+                </div>
+              )}
+
+              {/* Daftar Barang */}
+              <div>
+                <p className="text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">Item Produk Pesanan</p>
+                <div className="border border-slate-200 rounded-xl overflow-hidden divide-y divide-slate-100 text-xs">
+                  {(selectedOrder.order_items || []).map((it) => (
+                    <div key={it.id} className="p-3 flex justify-between items-center">
+                      <div>
+                        <p className="font-semibold text-slate-800">{it.products?.nama || 'Produk'}</p>
+                        <p className="text-slate-500 text-[11px]">{it.qty} unit &times; {it.products?.berat_per_unit_kg} kg</p>
+                      </div>
+                      <span className="font-mono font-bold text-slate-800">{Number(it.berat_kg).toFixed(1)} kg</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Total Muatan */}
+              <div className="p-3.5 bg-blue-50 border border-blue-200 rounded-xl flex items-center justify-between">
+                <span className="text-xs font-bold text-blue-900">Total Muatan Terverifikasi:</span>
+                <span className="text-base font-extrabold text-blue-700 font-mono">
+                  {Number(selectedOrder.total_muatan_kg).toFixed(2)} kg
+                </span>
+              </div>
+
+              {/* Bukti Pengiriman Button jika status diterima / tidak_lengkap */}
+              {(selectedOrder.status === 'diterima' || selectedOrder.status === 'tidak_lengkap') && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setViewingProofOrderId({
+                      orderId: selectedOrder.id,
+                      namaToko: selectedOrder.customers?.nama_toko || 'Toko Pelanggan',
+                    });
+                  }}
+                  className="w-full py-2.5 px-4 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition"
+                >
+                  <Eye className="w-4 h-4 text-emerald-600" />
+                  <span>Lihat Bukti Foto & Tanda Tangan Penerima</span>
+                </button>
+              )}
+            </div>
+
+            <div className="px-6 py-3.5 bg-slate-50 border-t border-slate-200 flex justify-end">
+              <button
+                type="button"
+                onClick={() => setIsDetailModalOpen(false)}
+                className="px-4 py-2 bg-white border border-slate-300 text-slate-700 font-medium rounded-xl text-xs hover:bg-slate-100 transition"
+              >
+                Tutup
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Modal 3: Bukti Penerimaan Pengiriman */}
+      {viewingProofOrderId && (
+        <ProofDetailModal
+          orderId={viewingProofOrderId.orderId}
+          namaToko={viewingProofOrderId.namaToko}
+          onClose={() => setViewingProofOrderId(null)}
+        />
+      )}
+    </div>
+  );
+};

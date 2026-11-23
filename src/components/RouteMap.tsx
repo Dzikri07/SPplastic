@@ -1,0 +1,178 @@
+import React, { useEffect } from 'react';
+import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap } from 'react-leaflet';
+import L from 'leaflet';
+import type { EditableRoute } from '../services/routingService';
+import { depotIcon } from '../lib/leafletIcons';
+
+interface RouteMapProps {
+  depot: { nama: string; lat: number; lng: number };
+  routes: EditableRoute[];
+  selectedRouteIndex?: number | null;
+  height?: string;
+}
+
+// Palet warna kontras untuk membedakan polyline rute setiap armada
+export const ROUTE_COLORS = [
+  '#2563eb', // Biru
+  '#059669', // Emerald
+  '#7c3aed', // Ungu
+  '#d97706', // Amber
+  '#dc2626', // Merah
+  '#0891b2', // Cyan
+  '#4f46e5', // Indigo
+];
+
+// Helper untuk membuat custom numbered marker pin pada peta
+function createNumberedIcon(num: number, color: string) {
+  return L.divIcon({
+    className: 'custom-route-marker',
+    html: `
+      <div style="
+        background-color: ${color};
+        color: white;
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        font-weight: bold;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        border: 2px solid white;
+      ">
+        ${num}
+      </div>
+    `,
+    iconSize: [26, 26],
+    iconAnchor: [13, 13],
+    popupAnchor: [0, -13],
+  });
+}
+
+// Sinkronisasi auto-fit bounds agar seluruh titik rute dan depot muat di layar
+function MapBoundsUpdater({
+  bounds,
+}: {
+  bounds: [number, number][];
+}) {
+  const map = useMap();
+  useEffect(() => {
+    if (bounds.length > 0) {
+      map.fitBounds(bounds, { padding: [40, 40], maxZoom: 15 });
+    }
+  }, [bounds, map]);
+  return null;
+}
+
+export const RouteMap: React.FC<RouteMapProps> = ({
+  depot,
+  routes,
+  selectedRouteIndex = null,
+  height = '480px',
+}) => {
+  // Kumpulkan semua titik untuk menghitung bounds
+  const allCoords: [number, number][] = [[depot.lat, depot.lng]];
+  routes.forEach((r) => {
+    r.stops.forEach((s) => allCoords.push([s.lat, s.lng]));
+  });
+
+  return (
+    <div className="w-full rounded-2xl overflow-hidden border border-slate-300 shadow-sm relative z-0">
+      <MapContainer
+        center={[depot.lat, depot.lng]}
+        zoom={12}
+        scrollWheelZoom={false}
+        style={{ height, width: '100%' }}
+      >
+        <TileLayer
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        />
+
+        <MapBoundsUpdater bounds={allCoords} />
+
+        {/* Marker Depot Pusat (Node 0) */}
+        <Marker position={[depot.lat, depot.lng]} icon={depotIcon}>
+          <Popup>
+            <div className="text-xs">
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-100 text-red-800">
+                DEPOT PUSAT (NODE 0)
+              </span>
+              <p className="font-bold text-slate-900 mt-1">{depot.nama}</p>
+              <p className="text-slate-500 font-mono text-[11px] mt-0.5">
+                {depot.lat.toFixed(6)}, {depot.lng.toFixed(6)}
+              </p>
+              <p className="text-slate-600 text-[10px] mt-1">
+                Titik awal dan akhir seluruh perjalanan armada distribusi.
+              </p>
+            </div>
+          </Popup>
+        </Marker>
+
+        {/* Render Polyline & Stop per Rute */}
+        {routes.map((route, rIndex) => {
+          const color = ROUTE_COLORS[rIndex % ROUTE_COLORS.length];
+          const isSelected = selectedRouteIndex === null || selectedRouteIndex === rIndex;
+
+          if (route.stops.length === 0) return null;
+
+          // Koordinat rute loop: Depot -> Stop 1 -> ... -> Stop K -> Depot
+          const polylineCoords: [number, number][] = [
+            [depot.lat, depot.lng],
+            ...route.stops.map((s) => [s.lat, s.lng] as [number, number]),
+            [depot.lat, depot.lng],
+          ];
+
+          return (
+            <React.Fragment key={route.tempId}>
+              {/* Garis Polyline Rute */}
+              <Polyline
+                positions={polylineCoords}
+                pathOptions={{
+                  color,
+                  weight: isSelected ? 4 : 2,
+                  opacity: isSelected ? 0.9 : 0.35,
+                  dashArray: isSelected ? undefined : '5, 5',
+                }}
+              />
+
+              {/* Marker Toko Pelanggan (Stop Berurutan) */}
+              {route.stops.map((stop) => (
+                <Marker
+                  key={stop.orderId}
+                  position={[stop.lat, stop.lng]}
+                  icon={createNumberedIcon(stop.urutan, color)}
+                  opacity={isSelected ? 1.0 : 0.5}
+                >
+                  <Popup>
+                    <div className="text-xs space-y-1">
+                      <div className="flex items-center justify-between gap-2">
+                        <span
+                          className="px-2 py-0.5 rounded text-[10px] font-bold text-white"
+                          style={{ backgroundColor: color }}
+                        >
+                          Rute #{rIndex + 1} &bull; Stop #{stop.urutan}
+                        </span>
+                        <span className="font-mono text-[11px] font-semibold text-slate-700">
+                          {stop.jarakDariSebelumnyaKm} km
+                        </span>
+                      </div>
+
+                      <p className="font-bold text-slate-900 text-sm mt-1">{stop.namaToko}</p>
+                      <p className="text-slate-500 text-[11px]">{stop.alamat}</p>
+                      <div className="pt-1 border-t border-slate-100 flex items-center justify-between text-[11px]">
+                        <span className="text-slate-600">Muatan Dikirim:</span>
+                        <span className="font-bold text-blue-700 font-mono">{stop.muatanKg} kg</span>
+                      </div>
+                    </div>
+                  </Popup>
+                </Marker>
+              ))}
+            </React.Fragment>
+          );
+        })}
+      </MapContainer>
+    </div>
+  );
+};
