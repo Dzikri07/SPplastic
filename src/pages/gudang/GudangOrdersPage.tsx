@@ -249,7 +249,11 @@ export const GudangOrdersPage: React.FC = () => {
                           <button
                             disabled={isUpdating || o.status === 'siap'}
                             onClick={() => handleStatusChange(o.id, 'siap')}
-                            className="flex items-center gap-1 px-3 py-1.5 bg-accent hover:bg-accent-hover disabled:opacity-40 text-white rounded-md text-xs font-medium transition-colors"
+                            className={`flex items-center gap-1 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
+                              o.status === 'siap'
+                                ? 'bg-emerald-100 text-emerald-800 border border-emerald-300 cursor-not-allowed opacity-90'
+                                : 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs'
+                            }`}
                           >
                             <CheckCircle2 className="w-3.5 h-3.5" />
                             <span>Siap</span>
@@ -258,7 +262,11 @@ export const GudangOrdersPage: React.FC = () => {
                           <button
                             disabled={isUpdating || o.status === 'belum_siap'}
                             onClick={() => handleStatusChange(o.id, 'belum_siap')}
-                            className="flex items-center gap-1 px-3 py-1.5 bg-amber-600 hover:bg-amber-700 disabled:opacity-40 text-white rounded-md text-xs font-medium transition-colors"
+                            className={`flex items-center gap-1 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
+                              o.status === 'belum_siap'
+                                ? 'bg-amber-100 text-amber-800 border border-amber-300 cursor-not-allowed opacity-90'
+                                : 'bg-amber-600 hover:bg-amber-700 text-white shadow-xs'
+                            }`}
                           >
                             <Clock className="w-3.5 h-3.5" />
                             <span>Belum siap</span>
@@ -341,7 +349,7 @@ export const GudangOrdersPage: React.FC = () => {
                 </button>
                 <button
                   onClick={() => handleStatusChange(selectedOrder.id, 'siap')}
-                  className="px-3.5 py-1.5 bg-accent hover:bg-accent-hover text-white rounded-md text-xs font-medium transition-colors"
+                  className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-md text-xs font-medium transition-colors"
                 >
                   Tandai siap kirim
                 </button>

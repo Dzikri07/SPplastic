@@ -1,8 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import type { EditableRoute } from '../services/routingService';
 import { depotIcon } from '../lib/leafletIcons';
+import { getRoadGeometry } from '../services/osrmRoutingService';
 
 interface RouteMapProps {
   depot: { nama: string; lat: number; lng: number };
@@ -71,14 +72,73 @@ export const RouteMap: React.FC<RouteMapProps> = ({
   selectedRouteIndex = null,
   height = '480px',
 }) => {
+  // State geometri jalan raya riil (OSRM)
+  const [roadGeometries, setRoadGeometries] = useState<Record<string, [number, number][]>>({});
+  const [isLoadingRoads, setIsLoadingRoads] = useState<boolean>(false);
+
   // Kumpulkan semua titik untuk menghitung bounds
   const allCoords: [number, number][] = [[depot.lat, depot.lng]];
   routes.forEach((r) => {
     r.stops.forEach((s) => allCoords.push([s.lat, s.lng]));
   });
 
+  // Fetch geometri jalan raya nyata dari OSRM
+  useEffect(() => {
+    let isCancelled = false;
+
+    async function loadRoadRoutes() {
+      if (routes.length === 0) return;
+      setIsLoadingRoads(true);
+
+      const updatedGeometries: Record<string, [number, number][]> = {};
+
+      await Promise.all(
+        routes.map(async (route) => {
+          if (route.stops.length === 0) return;
+
+          const waypoints: [number, number][] = [
+            [depot.lat, depot.lng],
+            ...route.stops.map((s) => [s.lat, s.lng] as [number, number]),
+            [depot.lat, depot.lng],
+          ];
+
+          const roadCoords = await getRoadGeometry(waypoints);
+          if (!isCancelled) {
+            updatedGeometries[route.tempId] = roadCoords;
+          }
+        })
+      );
+
+      if (!isCancelled) {
+        setRoadGeometries(updatedGeometries);
+        setIsLoadingRoads(false);
+      }
+    }
+
+    loadRoadRoutes();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [depot, routes]);
+
   return (
     <div className="w-full rounded-md overflow-hidden border border-border relative z-0">
+      {/* Badge status OSRM */}
+      <div className="absolute top-3 right-3 z-[1000] bg-white/90 backdrop-blur-xs px-2.5 py-1 rounded-md border border-slate-200 shadow-xs text-[11px] font-medium text-slate-700 flex items-center gap-1.5 pointer-events-none">
+        {isLoadingRoads ? (
+          <>
+            <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+            <span>Menyesuaikan jalur jalan raya...</span>
+          </>
+        ) : (
+          <>
+            <span className="w-2 h-2 rounded-full bg-emerald-500" />
+            <span>Jalur Jalan Raya (OSRM)</span>
+          </>
+        )}
+      </div>
+
       <MapContainer
         center={[depot.lat, depot.lng]}
         zoom={12}
@@ -117,16 +177,19 @@ export const RouteMap: React.FC<RouteMapProps> = ({
 
           if (route.stops.length === 0) return null;
 
-          // Koordinat rute loop: Depot -> Stop 1 -> ... -> Stop K -> Depot
-          const polylineCoords: [number, number][] = [
+          // Koordinat rute loop standar (fallback)
+          const fallbackCoords: [number, number][] = [
             [depot.lat, depot.lng],
             ...route.stops.map((s) => [s.lat, s.lng] as [number, number]),
             [depot.lat, depot.lng],
           ];
 
+          // Gunakan geometri jalan raya jika sudah tersedia
+          const polylineCoords = roadGeometries[route.tempId] || fallbackCoords;
+
           return (
             <React.Fragment key={route.tempId}>
-              {/* Garis Polyline Rute */}
+              {/* Garis Polyline Rute (Menempel ke jalan raya) */}
               <Polyline
                 positions={polylineCoords}
                 pathOptions={{

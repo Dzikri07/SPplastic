@@ -26,6 +26,7 @@ import {
 import { exportEvaluasiPdf } from '../../services/exportService';
 import { depotIcon } from '../../lib/leafletIcons';
 import { createNumberedIcon } from '../../components/RouteMap';
+import { getRoadGeometry } from '../../services/osrmRoutingService';
 
 interface RouteOption {
   id: string;
@@ -295,6 +296,38 @@ export const EvaluationPage: React.FC = () => {
     coords.push([depotCoord.lat, depotCoord.lng]);
     return coords;
   }, [currentRoute, depotCoord]);
+
+  // State rute jalan raya (OSRM) untuk perbandingan
+  const [conventionalRoadCoords, setConventionalRoadCoords] = useState<[number, number][]>([]);
+  const [optimalRoadCoords, setOptimalRoadCoords] = useState<[number, number][]>([]);
+
+  useEffect(() => {
+    let isCancelled = false;
+    if (conventionalPolylineCoords.length > 1) {
+      getRoadGeometry(conventionalPolylineCoords).then((coords) => {
+        if (!isCancelled) setConventionalRoadCoords(coords);
+      });
+    } else {
+      setConventionalRoadCoords([]);
+    }
+    return () => {
+      isCancelled = true;
+    };
+  }, [conventionalPolylineCoords]);
+
+  useEffect(() => {
+    let isCancelled = false;
+    if (optimalPolylineCoords.length > 1) {
+      getRoadGeometry(optimalPolylineCoords).then((coords) => {
+        if (!isCancelled) setOptimalRoadCoords(coords);
+      });
+    } else {
+      setOptimalRoadCoords([]);
+    }
+    return () => {
+      isCancelled = true;
+    };
+  }, [optimalPolylineCoords]);
 
   return (
     <div className="space-y-6">
@@ -621,7 +654,11 @@ export const EvaluationPage: React.FC = () => {
               {/* Jalur Rute Konvensional: Garis Putus-putus Merah */}
               {conventionalPolylineCoords.length > 1 && (
                 <Polyline
-                  positions={conventionalPolylineCoords}
+                  positions={
+                    conventionalRoadCoords.length > 0
+                      ? conventionalRoadCoords
+                      : conventionalPolylineCoords
+                  }
                   pathOptions={{
                     color: '#e11d48', // Rose-600
                     weight: 3.5,
@@ -634,7 +671,11 @@ export const EvaluationPage: React.FC = () => {
               {/* Jalur Rute Saving Matrix: Garis Tegas Biru */}
               {optimalPolylineCoords.length > 1 && (
                 <Polyline
-                  positions={optimalPolylineCoords}
+                  positions={
+                    optimalRoadCoords.length > 0
+                      ? optimalRoadCoords
+                      : optimalPolylineCoords
+                  }
                   pathOptions={{
                     color: '#2563eb', // Blue-600
                     weight: 4,
